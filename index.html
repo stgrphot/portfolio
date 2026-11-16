@@ -343,11 +343,11 @@
       bottom: 0;
       left: 50%;
       width: 68px;
-      transform: translateX(-50%);
+      transform: translateX(-50%) translateZ(2px);
       pointer-events: none;
       z-index: 4;
       opacity: 0;
-      transition: opacity 0.55s cubic-bezier(0.25, 0.8, 0.25, 1);
+      transition: opacity 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
       background: linear-gradient(
         to right,
         rgba(0, 0, 0, 0) 0%,
@@ -366,9 +366,6 @@
     }
     #lightbox-flip-stage.no-gutter-transition #magazine-spine-gutter {
       transition: none;
-    }
-    #lightbox-flip-stage.is-spread #magazine-spine-gutter {
-      opacity: 1;
     }
 
     /* 3D Turning Leaf Overlay Container */
@@ -487,6 +484,7 @@
 
     /* Front & Back Faces for Forward Flip (Right -> Left across center spine) */
     .turn-forward .flip-leaf-front {
+      transform: translateZ(0.5px);
       border-top-right-radius: 12px;
       border-bottom-right-radius: 12px;
     }
@@ -494,7 +492,7 @@
       right: 0;
     }
     .turn-forward .flip-leaf-back {
-      transform: rotateY(180deg);
+      transform: rotateY(180deg) translateZ(0.5px);
       border-top-left-radius: 12px;
       border-bottom-left-radius: 12px;
     }
@@ -504,6 +502,7 @@
 
     /* Front & Back Faces for Backward Flip (Left -> Right across center spine) */
     .turn-backward .flip-leaf-front {
+      transform: translateZ(0.5px);
       border-top-left-radius: 12px;
       border-bottom-left-radius: 12px;
     }
@@ -511,7 +510,7 @@
       left: 0;
     }
     .turn-backward .flip-leaf-back {
-      transform: rotateY(180deg);
+      transform: rotateY(180deg) translateZ(0.5px);
       border-top-right-radius: 12px;
       border-bottom-right-radius: 12px;
     }
@@ -2597,6 +2596,7 @@
       const flipStage       = document.getElementById('lightbox-flip-stage');
       const bookFlipOverlay = document.getElementById('book-flip-overlay');
       let isFlippingPage    = false;
+      let activeFlipTimer   = null;
 
       function isCoverPageIndex(idx, total) {
         return total > 1 && (idx === 0 || idx === total - 1);
@@ -2608,10 +2608,10 @@
           flipStage.classList.remove('is-book-mode', 'pos-full', 'pos-right', 'pos-left', 'is-spread');
           flipStage.style.removeProperty('--book-width');
           flipStage.style.removeProperty('--book-height');
+          lightboxImg.style.opacity = '';
           return;
         }
 
-        // Use an inner spread image (index 1) to measure the canonical double-page aspect ratio
         const spreadSrc = pages[1] || pages[0];
         const probe = new Image();
         probe.onload = () => {
@@ -2646,29 +2646,41 @@
         if (!flipStage) return;
         if (total <= 1) {
           flipStage.classList.remove('is-book-mode', 'pos-full', 'pos-right', 'pos-left', 'is-spread');
+          lightboxImg.style.opacity = '';
           return;
         }
 
         flipStage.classList.add('is-book-mode');
         flipStage.classList.remove('pos-full', 'pos-right', 'pos-left');
+        lightboxImg.style.opacity = '1';
 
         if (pageIdx === 0) {
-          // Front cover lies on the right half of the closed book
           flipStage.classList.add('pos-right');
           flipStage.classList.remove('is-spread');
         } else if (pageIdx === total - 1) {
-          // Back cover lies on the left half of the closed book
           flipStage.classList.add('pos-left');
           flipStage.classList.remove('is-spread');
         } else {
-          // Inner pages span across both halves with center spine
           flipStage.classList.add('pos-full', 'is-spread');
         }
+      }
+
+      function finishActiveFlip() {
+        if (activeFlipTimer) {
+          clearTimeout(activeFlipTimer);
+          activeFlipTimer = null;
+        }
+        if (bookFlipOverlay) {
+          bookFlipOverlay.classList.remove('is-flipping');
+          bookFlipOverlay.innerHTML = '';
+        }
+        isFlippingPage = false;
       }
 
       function runPageFlip(direction, oldIdx, newIdx, oldSrc, newSrc, callback) {
         const total = currentItemPages.length;
         if (!bookFlipOverlay || !flipStage || !oldSrc || oldSrc === newSrc) {
+          finishActiveFlip();
           lightboxImg.src = newSrc;
           applyPageStageLayout(newIdx, total);
           if (callback) callback();
@@ -2676,8 +2688,7 @@
         }
 
         if (isFlippingPage) {
-          bookFlipOverlay.innerHTML = '';
-          bookFlipOverlay.classList.remove('is-flipping');
+          finishActiveFlip();
         }
 
         isFlippingPage = true;
@@ -2688,37 +2699,23 @@
         const oldImgClass = oldIsCover ? 'is-single-img' : 'is-spread-img';
         const newImgClass = newIsCover ? 'is-single-img' : 'is-spread-img';
 
-        // Prepare underlying static base image depending on what stays visible behind the turning leaf
-        if (oldIdx === 0 && isFwd) {
-          // Opening front cover: fade in the center spine shadow smoothly during the turn
-          lightboxImg.src = '';
+        // Hide base image smoothly via opacity instead of clearing src="" (prevents broken-image/border flash)
+        if ((oldIdx === 0 && isFwd) || (oldIdx === total - 1 && !isFwd)) {
+          lightboxImg.style.opacity = '0';
           flipStage.classList.remove('no-gutter-transition', 'pos-full', 'pos-right', 'pos-left');
           requestAnimationFrame(() => flipStage.classList.add('is-spread'));
-        } else if (newIdx === 0 && !isFwd) {
-          // Closing front cover: fade out the center spine shadow smoothly as the cover closes
-          lightboxImg.src = '';
+        } else if ((newIdx === 0 && !isFwd) || (newIdx === total - 1 && isFwd)) {
+          lightboxImg.style.opacity = '0';
           flipStage.classList.remove('no-gutter-transition', 'pos-full', 'pos-right', 'pos-left', 'is-spread');
-        } else if (newIdx === total - 1 && isFwd) {
-          // Closing back cover: fade out the center spine shadow smoothly as the back cover closes
-          lightboxImg.src = '';
-          flipStage.classList.remove('no-gutter-transition', 'pos-full', 'pos-right', 'pos-left', 'is-spread');
-        } else if (oldIdx === total - 1 && !isFwd) {
-          // Opening back cover: fade in the center spine shadow smoothly during the turn
-          lightboxImg.src = '';
-          flipStage.classList.remove('no-gutter-transition', 'pos-full', 'pos-right', 'pos-left');
-          requestAnimationFrame(() => flipStage.classList.add('is-spread'));
         } else {
-          // Standard inner spread-to-spread turn: keep center spine shadow continuous
           flipStage.classList.add('no-gutter-transition');
+          lightboxImg.src = oldSrc;
           applyPageStageLayout(oldIdx, total);
         }
 
-        // Build exact 50/50 spine-hinged 3D leaf & underlay matching the transition
         let underlayHtml = '';
         if (isFwd) {
-          // Forward: Right half turns over to the left
           if (!newIsCover) {
-            // Destination right half is visible underneath as the right leaf lifts
             underlayHtml += `
               <div class="flip-underlay-half right-half ${newImgClass}">
                 <img src="${newSrc}" alt="">
@@ -2727,7 +2724,6 @@
             `;
           }
           if (newIdx === total - 1 && !oldIsCover) {
-            // When closing back cover, keep right half of old spread visible on right until covered
             underlayHtml += `
               <div class="flip-underlay-half right-half ${oldImgClass}">
                 <img src="${oldSrc}" alt="">
@@ -2735,9 +2731,7 @@
             `;
           }
         } else {
-          // Backward: Left half turns over to the right
           if (!newIsCover) {
-            // Destination left half is visible underneath as the left leaf lifts
             underlayHtml += `
               <div class="flip-underlay-half left-half ${newImgClass}">
                 <img src="${newSrc}" alt="">
@@ -2746,7 +2740,6 @@
             `;
           }
           if (newIdx === 0 && !oldIsCover) {
-            // When closing front cover, keep left half of old spread visible on left until covered
             underlayHtml += `
               <div class="flip-underlay-half left-half ${oldImgClass}">
                 <img src="${oldSrc}" alt="">
@@ -2771,17 +2764,19 @@
 
         bookFlipOverlay.classList.add('is-flipping');
 
-        const leafEl = bookFlipOverlay.querySelector('.flip-leaf-3d');
-        leafEl.addEventListener('animationend', () => {
+        const completeFlip = () => {
+          if (!isFlippingPage) return;
           flipStage.classList.add('no-gutter-transition');
           lightboxImg.src = newSrc;
           applyPageStageLayout(newIdx, total);
-          bookFlipOverlay.classList.remove('is-flipping');
-          bookFlipOverlay.innerHTML = '';
-          isFlippingPage = false;
+          finishActiveFlip();
           requestAnimationFrame(() => flipStage.classList.remove('no-gutter-transition'));
           if (callback) callback();
-        }, { once: true });
+        };
+
+        const leafEl = bookFlipOverlay.querySelector('.flip-leaf-3d');
+        leafEl.addEventListener('animationend', completeFlip, { once: true });
+        activeFlipTimer = setTimeout(completeFlip, 760);
       }
 
       // ----------------------------------------------------
@@ -2811,11 +2806,7 @@
         currentLightboxIndex = (index + currentFilteredItems.length) % currentFilteredItems.length;
         const currentItem = currentFilteredItems[currentLightboxIndex];
 
-        if (bookFlipOverlay) {
-          bookFlipOverlay.classList.remove('is-flipping');
-          bookFlipOverlay.innerHTML = '';
-          isFlippingPage = false;
-        }
+        finishActiveFlip();
 
         if (lightboxIndexCounter) {
           const curStr = String(currentLightboxIndex + 1).padStart(2, '0');
