@@ -2228,14 +2228,7 @@
           </div>
           <!-- Right: multi-page PDF pager controls -->
           <div id="lightbox-page-controls" class="hidden items-center gap-1">
-            <button id="lightbox-page-prev" type="button" class="p-1.5 transition-colors focus:outline-none rounded" title="Vorherige Seite">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
-            </button>
-            <span id="lightbox-page-indicator" class="font-mono text-[11px] px-1 tabular-nums">Seite 1 / 1</span>
-            <button id="lightbox-page-next" type="button" class="p-1.5 transition-colors focus:outline-none rounded" title="Nächste Seite">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
-            </button>
-            <!-- Divider + PDF link -->
+            <!-- PDF link -->
             <a id="lightbox-pdf-link" href="#" target="_blank" rel="noopener noreferrer"
                class="ml-1 pl-2.5 border-l text-[11px] font-medium transition-colors inline-flex items-center gap-1 tracking-widest uppercase"
                title="Original-PDF öffnen">
@@ -2328,9 +2321,6 @@
       const lightboxPrev = document.getElementById('lightbox-prev');
       const lightboxNext = document.getElementById('lightbox-next');
       const lightboxPageControls = document.getElementById('lightbox-page-controls');
-      const lightboxPagePrev = document.getElementById('lightbox-page-prev');
-      const lightboxPageNext = document.getElementById('lightbox-page-next');
-      const lightboxPageIndicator = document.getElementById('lightbox-page-indicator');
       const lightboxPdfLink = document.getElementById('lightbox-pdf-link');
 
       let currentFilter = 'home';
@@ -2530,8 +2520,6 @@
           el.textContent = t.noMetadata;
         });
 
-        if (lightboxPagePrev) lightboxPagePrev.title = t.prevPage;
-        if (lightboxPageNext) lightboxPageNext.title = t.nextPage;
         if (lightboxPdfLink) lightboxPdfLink.title = t.openPdf;
         if (lightboxClose) lightboxClose.setAttribute('aria-label', t.closeLightbox);
         if (lightboxPrev) lightboxPrev.setAttribute('aria-label', t.prevImage);
@@ -2543,9 +2531,6 @@
             if (cat && t.categoryLabels[cat]) {
               lightboxCategory.textContent = t.categoryLabels[cat].toUpperCase();
             }
-          }
-          if (currentItemPages.length > 1 && lightboxPageIndicator) {
-            lightboxPageIndicator.textContent = t.pageIndicator(currentPageIndex + 1, currentItemPages.length);
           }
           if (lightboxExif && (!lightboxExif.textContent || lightboxExif.textContent === i18n.de.noMetadata || lightboxExif.textContent === i18n.en.noMetadata)) {
             lightboxExif.textContent = t.noMetadata;
@@ -2996,10 +2981,6 @@
         const newSrc = currentItemPages[currentPageIndex];
         const flipDir = direction || (currentPageIndex > prevIdx ? 'forward' : 'backward');
 
-        if (lightboxPageIndicator) {
-          lightboxPageIndicator.textContent = i18n[currentLang].pageIndicator(currentPageIndex + 1, currentItemPages.length);
-        }
-
         if (currentItemPages.length > 1) {
           runPageFlip(flipDir, prevIdx, currentPageIndex, oldSrc, newSrc, null);
         } else {
@@ -3067,29 +3048,11 @@
 
         lightboxExif.textContent = exifSpecs.length ? exifSpecs.join('  ·  ') : i18n[currentLang].noMetadata;
 
-        const showPagePager = currentItemPages.length > 1;
-
-        if (showPagePager || pdfPath) {
+        if (pdfPath && lightboxPdfLink) {
           lightboxPageControls.classList.remove('hidden');
           lightboxPageControls.classList.add('flex');
-          
-          if (showPagePager) {
-            lightboxPagePrev.style.display = 'inline-flex';
-            lightboxPageNext.style.display = 'inline-flex';
-            lightboxPageIndicator.style.display = 'inline-block';
-            lightboxPageIndicator.textContent = i18n[currentLang].pageIndicator(1, currentItemPages.length);
-          } else {
-            lightboxPagePrev.style.display = 'none';
-            lightboxPageNext.style.display = 'none';
-            lightboxPageIndicator.style.display = 'none';
-          }
-
-          if (pdfPath && lightboxPdfLink) {
-            lightboxPdfLink.href = pdfPath;
-            lightboxPdfLink.style.display = 'inline-flex';
-          } else if (lightboxPdfLink) {
-            lightboxPdfLink.style.display = 'none';
-          }
+          lightboxPdfLink.href = pdfPath;
+          lightboxPdfLink.style.display = 'inline-flex';
         } else {
           lightboxPageControls.classList.add('hidden');
           lightboxPageControls.classList.remove('flex');
@@ -3129,19 +3092,6 @@
         } else {
           updateLightboxContent(currentLightboxIndex + 1);
         }
-      }
-
-      if (lightboxPagePrev) {
-        lightboxPagePrev.addEventListener('click', (e) => {
-          e.stopPropagation();
-          updateLightboxPage(currentPageIndex - 1, 'backward');
-        });
-      }
-      if (lightboxPageNext) {
-        lightboxPageNext.addEventListener('click', (e) => {
-          e.stopPropagation();
-          updateLightboxPage(currentPageIndex + 1, 'forward');
-        });
       }
 
       lightboxClose.addEventListener('click', (e) => {
