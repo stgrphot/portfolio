@@ -221,21 +221,147 @@
     /* ── Gallery Item Card & Staggered Reveal ── */
     .gallery-item {
       width: 100%;
+      transform-style: preserve-3d;
+      will-change: transform, opacity;
       transition:
         opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
         border-color 0.4s ease,
         box-shadow 0.4s ease;
       content-visibility: auto;
     }
 
+    /* Specular Glare Reflection on Cards */
+    .card-glare {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 12;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      background: radial-gradient(
+        circle 280px at var(--glare-x, 50%) var(--glare-y, 50%),
+        rgba(255, 255, 255, 0.16),
+        transparent 75%
+      );
+      mix-blend-mode: screen;
+    }
+    .gallery-item:hover .card-glare {
+      opacity: 1;
+    }
+
+    /* Focus Dimming on Home Showcase when hovering a single category */
+    @media (hover: hover) and (pointer: fine) {
+      .portfolio-grid.home-grid:hover .gallery-item:not(:hover) {
+        opacity: 0.52;
+        transform: scale(0.985);
+      }
+    }
+
     .gallery-item:hover {
-      border-color: rgba(255, 255, 255, 0.24);
-      box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.75);
+      border-color: rgba(255, 255, 255, 0.28);
+      box-shadow: 0 28px 56px -12px rgba(0, 0, 0, 0.82);
     }
     body.light-mode .gallery-item:hover {
-      border-color: rgba(0, 0, 0, 0.25);
-      box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.14);
+      border-color: rgba(0, 0, 0, 0.28);
+      box-shadow: 0 28px 56px -12px rgba(0, 0, 0, 0.16);
+    }
+
+    /* ── Editorial Hero Entrance Animations ── */
+    .hero-reveal-mask {
+      overflow: hidden;
+      padding-bottom: 0.15em;
+    }
+    @keyframes heroTextRise {
+      0% {
+        opacity: 0;
+        transform: translateY(105%) skewY(2deg);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) skewY(0deg);
+      }
+    }
+    @keyframes heroFadeSlide {
+      0% {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes heroLineExpand {
+      0% {
+        transform: scaleX(0);
+      }
+      100% {
+        transform: scaleX(1);
+      }
+    }
+    #hero-intro.animate-hero #hero-title {
+      animation: heroTextRise 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    #hero-intro.animate-hero #hero-subtitle {
+      opacity: 0;
+      animation: heroFadeSlide 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.18s forwards;
+    }
+    .hero-border-line {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+      transform-origin: left center;
+    }
+    body.light-mode .hero-border-line {
+      background: rgba(0, 0, 0, 0.08);
+    }
+    #hero-intro.animate-hero .hero-border-line {
+      animation: heroLineExpand 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+    }
+
+    /* ── Scroll Reveal for About Section ── */
+    .about-reveal-item {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .about-section.is-in-view .about-reveal-item {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .about-section.is-in-view .about-reveal-delay-1 { transition-delay: 0.12s; }
+    .about-section.is-in-view .about-reveal-delay-2 { transition-delay: 0.24s; }
+    .about-section.is-in-view .about-reveal-delay-3 { transition-delay: 0.36s; }
+
+    /* Interactive Hover Sweep on About Spec Rows */
+    .about-details li {
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+    }
+    .about-details li:hover {
+      transform: translateX(6px);
+      border-bottom-color: rgba(255, 255, 255, 0.28);
+    }
+    body.light-mode .about-details li:hover {
+      border-bottom-color: rgba(0, 0, 0, 0.28);
+    }
+
+    /* Subtle Breathing Ambient Spotlight */
+    @keyframes ambientFloat {
+      0%, 100% {
+        transform: translateX(-50%) scale(1);
+        opacity: 0.85;
+      }
+      50% {
+        transform: translateX(-48%) scale(1.08);
+        opacity: 1;
+      }
+    }
+    .ambient-spotlight {
+      animation: ambientFloat 12s ease-in-out infinite;
     }
 
     /* Home Cover Overlay */
@@ -1125,9 +1251,9 @@
   </header>
 
   <!-- Editorial Hero Banner (Only visible on Home) -->
-  <section id="hero-intro" class="relative z-10 max-w-[1600px] w-full mx-auto px-4 sm:px-8 pt-10 sm:pt-14 pb-2 transition-all duration-500">
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/[0.07] pb-8">
-      <div>
+  <section id="hero-intro" class="relative z-10 max-w-[1600px] w-full mx-auto px-4 sm:px-8 pt-10 sm:pt-14 pb-2 transition-all duration-500 animate-hero">
+    <div class="relative flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8">
+      <div class="hero-reveal-mask">
         <h2 id="hero-title" class="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-white leading-[1.15]">
           Momente zwischen <span class="italic font-light text-zinc-300">Licht</span> &amp; <span class="italic font-light text-zinc-300">Präzision</span>.
         </h2>
@@ -1135,6 +1261,7 @@
       <p id="hero-subtitle" class="text-xs sm:text-sm text-zinc-400 max-w-md font-light leading-relaxed">
         Ausgewählte Arbeiten aus Wildlife, Luftfahrt, Landschaft, Kulinarik und visueller Gestaltung. Wähle eine Kollektion für die Vollbild-Ansicht.
       </p>
+      <div class="hero-border-line" aria-hidden="true"></div>
     </div>
   </section>
 
@@ -1814,6 +1941,7 @@
                data-pdf="assets/112025_Magazin-M273_Leo_Staeger.pdf">
         <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="images/design/magazin-p1.jpg" 
+               onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/schorschgago/portfolio/main/images/design/magazin-p1.jpg';"
                alt="Magazin Design M273" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
         <!-- Home Title Overlay -->
@@ -1839,6 +1967,7 @@
                data-pdf="assets/112025_Flyer-M273_Leo_Staeger.pdf">
         <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="images/design/flyer-p1.jpg" 
+               onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/schorschgago/portfolio/main/images/design/flyer-p1.jpg';"
                alt="Flyer Design M273" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
         <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
@@ -1858,6 +1987,7 @@
                data-pdf="assets/012025_Imageplakat_M274_Leo_Livio_Ansicht.pdf">
         <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="images/design/plakat-p1.jpg" 
+               onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/schorschgago/portfolio/main/images/design/plakat-p1.jpg';"
                alt="Imageplakat M274" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
         <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
@@ -1880,6 +2010,7 @@
                data-pdf="assets/052026_M275_Stäger_Leo_Konzept-SHIFT_Teil3.pdf">
         <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="images/design/konzept-shift-p1.jpg" 
+               onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/schorschgago/portfolio/main/images/design/konzept-shift-p1.jpg';"
                alt="Konzept SHIFT M275" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
         <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
@@ -1899,7 +2030,7 @@
   
     <div class="about-container">
       <!-- Video Spalte -->
-      <div class="about-video-wrapper">
+      <div class="about-video-wrapper about-reveal-item">
         <div class="about-video-frame">
           <iframe 
             src="https://www.youtube.com/embed/leljeVcVIek?si=jUiiEQe3zP9Vj2ht" 
@@ -1913,14 +2044,16 @@
   
       <!-- Steckbrief Spalte -->
       <div class="about-content">
-        <span class="about-subtitle font-mono">ABOUT // PROFILE</span>
-        <h2 class="about-title">LEO STÄGER</h2>
+        <div class="about-reveal-item about-reveal-delay-1">
+          <span class="about-subtitle font-mono">ABOUT // PROFILE</span>
+          <h2 class="about-title">LEO STÄGER</h2>
+        </div>
         
-        <p class="about-bio" id="about-bio">
+        <p class="about-bio about-reveal-item about-reveal-delay-2" id="about-bio">
           Lernender Mediamatiker mit viel Interesse an Fotografie &amp; Videografie.
         </p>
   
-        <ul class="about-details">
+        <ul class="about-details about-reveal-item about-reveal-delay-3">
           <li>
             <span class="detail-label" id="about-location-label">Standort</span>
             <span class="detail-value" id="about-location-value">Schweiz</span>
@@ -2084,13 +2217,13 @@
         <!-- 3D Flip Animation Layer -->
         <div id="book-flip-overlay" aria-hidden="true"></div>
       </div>
-      
+
       <!-- EXIF / Info Bar in Lightbox -->
-      <div class="mt-4 w-full">
-        <div class="lightbox-info-bar flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl shadow-2xl transition-colors duration-300">
+      <div class="mt-3 w-full">
+        <div class="lightbox-info-bar flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-lg shadow-xl transition-colors duration-300">
           <!-- Left: category badge + EXIF -->
           <div class="flex items-center gap-2.5 min-w-0">
-            <span id="lightbox-category" class="shrink-0 uppercase font-semibold text-[9px] tracking-[0.2em] border px-2 py-0.5 rounded transition-colors duration-300"></span>
+            <span id="lightbox-category" class="shrink-0 uppercase font-semibold text-[9px] tracking-widest border px-2 py-0.5 rounded transition-colors duration-300"></span>
             <span id="lightbox-exif" class="font-mono text-xs tracking-wide truncate transition-colors duration-300"></span>
           </div>
           <!-- Right: multi-page PDF pager controls -->
@@ -2102,6 +2235,7 @@
             <button id="lightbox-page-next" type="button" class="p-1.5 transition-colors focus:outline-none rounded" title="Nächste Seite">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
             </button>
+            <!-- Divider + PDF link -->
             <a id="lightbox-pdf-link" href="#" target="_blank" rel="noopener noreferrer"
                class="ml-1 pl-2.5 border-l text-[11px] font-medium transition-colors inline-flex items-center gap-1 tracking-widest uppercase"
                title="Original-PDF öffnen">
@@ -2118,16 +2252,54 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // Set current year
-      document.getElementById('year').textContent = new Date().getFullYear();
+      const yearEl = document.getElementById('year');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-      // Scroll Progress Indicator
+      // Scroll Progress Indicator & Skyline Parallax
       const scrollProgress = document.getElementById('scroll-progress');
+      const footerSkyline = document.querySelector('.footer-skyline');
       window.addEventListener('scroll', () => {
         const scrollTop = window.scrollY;
         const docHeight = document.documentElement.scrollHeight - window.innerHeight;
         const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
         if (scrollProgress) scrollProgress.style.width = `${pct}%`;
+
+        if (footerSkyline && docHeight > 0) {
+          const remaining = docHeight - scrollTop;
+          const shiftY = Math.min(remaining * 0.04, 10);
+          footerSkyline.style.transform = `translateY(${shiftY}px)`;
+        }
       }, { passive: true });
+
+      // Scroll-Triggered Reveal for About Section
+      const aboutObserverEl = document.getElementById('about-section');
+      if (aboutObserverEl && 'IntersectionObserver' in window) {
+        const aboutObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-in-view');
+            }
+          });
+        }, { threshold: 0.16 });
+        aboutObserver.observe(aboutObserverEl);
+      } else if (aboutObserverEl) {
+        aboutObserverEl.classList.add('is-in-view');
+      }
+
+      // Magnetic Hover Pull on Navigation Filter Pills (Desktop)
+      if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        document.querySelectorAll('.filter-btn, #lang-toggle-btn').forEach(btn => {
+          btn.addEventListener('mousemove', (e) => {
+            const rect = btn.getBoundingClientRect();
+            const relX = (e.clientX - rect.left - rect.width / 2) * 0.18;
+            const relY = (e.clientY - rect.top - rect.height / 2) * 0.22;
+            btn.style.transform = `translate3d(${relX}px, ${relY}px, 0)`;
+          });
+          btn.addEventListener('mouseleave', () => {
+            btn.style.transform = '';
+          });
+        });
+      }
 
       // Custom Editorial Cursor
       const customCursor = document.getElementById('custom-cursor');
@@ -2453,7 +2625,11 @@
           galleryContainer.classList.remove('category-grid');
           galleryContainer.classList.add('home-grid');
           galleryContainer.style.removeProperty('--cat-cols');
-          if (heroIntro) heroIntro.classList.remove('hidden');
+          if (heroIntro) {
+            heroIntro.classList.remove('hidden', 'animate-hero');
+            void heroIntro.offsetWidth;
+            heroIntro.classList.add('animate-hero');
+          }
           if (backToHomePill) {
             backToHomePill.classList.add('hidden');
             backToHomePill.classList.remove('inline-flex');
@@ -2564,9 +2740,17 @@
       }
 
       // ----------------------------------------------------
-      // Item Click & Custom Cursor Hover Handling
+      // Item Click, 3D Tilt Glare & Custom Cursor Hover Handling
       // ----------------------------------------------------
+      const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
       galleryItems.forEach(item => {
+        // Inject specular glare layer into every card
+        const glareEl = document.createElement('div');
+        glareEl.className = 'card-glare';
+        glareEl.setAttribute('aria-hidden', 'true');
+        item.appendChild(glareEl);
+
         item.addEventListener('click', () => {
           if (currentFilter === 'home') {
             const targetCategory = item.getAttribute('data-category');
@@ -2579,13 +2763,35 @@
           }
         });
 
-        if (customCursor) {
-          item.addEventListener('mouseenter', () => {
-            customCursor.classList.add('is-active');
+        if (supportsHover) {
+          item.addEventListener('mousemove', (e) => {
+            const rect = item.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const normX = (x / rect.width) - 0.5;
+            const normY = (y / rect.height) - 0.5;
+
+            const maxTilt = currentFilter === 'home' ? 5.5 : 3.2;
+            const rotateY = normX * maxTilt * 2;
+            const rotateX = -normY * maxTilt * 2;
+
+            item.style.transition = 'border-color 0.3s ease, box-shadow 0.3s ease';
+            item.style.transform = `perspective(950px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-4px) scale(1.012)`;
+            item.style.setProperty('--glare-x', `${(x / rect.width) * 100}%`);
+            item.style.setProperty('--glare-y', `${(y / rect.height) * 100}%`);
           });
+
           item.addEventListener('mouseleave', () => {
-            customCursor.classList.remove('is-active');
+            item.style.transition = '';
+            item.style.transform = '';
+            if (customCursor) customCursor.classList.remove('is-active');
           });
+
+          if (customCursor) {
+            item.addEventListener('mouseenter', () => {
+              customCursor.classList.add('is-active');
+            });
+          }
         }
       });
 
