@@ -231,10 +231,59 @@
     .home-pill-btn {
       position: relative;
       overflow: hidden;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border-radius: 9999px;
+      background-clip: padding-box;
+      -webkit-mask-image: -webkit-radial-gradient(white, black);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
       border: 1px solid rgba(255, 255, 255, 0.22);
       color: #e4e4e7;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    }
+    .home-pill-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      width: 45%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+      transform: translateX(-140%) skewX(-20deg);
+      pointer-events: none;
+    }
+    .home-pill-btn:hover::before {
+      animation: homeShimmerSweep 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .home-pill-btn:hover {
+      border-color: rgba(255, 255, 255, 0.5);
+      color: #ffffff;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
+    }
+    .home-pill-btn.active-filter {
+      background: #ffffff !important;
+      color: #050505 !important;
+      border-color: #ffffff !important;
+      box-shadow: none;
+    }
+    .home-pill-btn.active-filter::before {
+      background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.08), transparent);
+    }
+
+    body.light-mode .home-pill-btn {
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.015) 100%);
+      border-color: rgba(0, 0, 0, 0.22);
+      color: #18181b;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+    body.light-mode .home-pill-btn:hover {
+      border-color: #000000;
+      color: #000000;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    body.light-mode .home-pill-btn.active-filter {
+      background: #09090b !important;
+      color: #ffffff !important;
+      border-color: #09090b !important;
+      box-shadow: none;
     }
     .home-pill-btn::before {
       content: '';
@@ -304,40 +353,34 @@
       width: 100%;
     }
 
-    /* Standard Category Grid: Real Masonry via CSS Columns */
+    /* Standard Category Grid: Balanced JS Masonry Columns */
     .portfolio-grid.category-grid {
-      display: block;
-      column-gap: 0.75rem;
-      column-count: 2;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
     }
     @media (min-width: 640px) {
       .portfolio-grid.category-grid {
-        column-gap: 1.5rem;
-        column-count: var(--cat-cols, 2);
+        gap: 1.5rem;
       }
     }
-    @media (min-width: 1024px) {
-      .portfolio-grid.category-grid {
-        column-count: var(--cat-cols, 3);
-      }
+
+    .masonry-column {
+      flex: 1 1 0%;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
     }
-    @media (min-width: 1536px) {
-      .portfolio-grid.category-grid {
-        column-count: var(--cat-cols, 4);
+    @media (min-width: 640px) {
+      .masonry-column {
+        gap: 1.5rem;
       }
     }
 
     .portfolio-grid.category-grid .gallery-item {
-      display: inline-block;
+      display: block;
       width: 100%;
-      margin-bottom: 0.75rem;
-      break-inside: avoid;
-      -webkit-column-break-inside: avoid;
-    }
-    @media (min-width: 640px) {
-      .portfolio-grid.category-grid .gallery-item {
-        margin-bottom: 1.5rem;
-      }
     }
 
     /* Home Grid: Editorial Showcase Layout (2-Column Editorial on Mobile, unchanged on Desktop) */
@@ -2024,33 +2067,7 @@
       <!-- Cover Aviation (Home Cover) -->
       <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0d0e12] border border-white/[0.08] cursor-pointer"
                data-category="aviation"
-               data-is-cover="true"
-               data-shutter="1/2500s" data-aperture="ƒ/6.3" data-focal="300mm" data-iso="ISO 250" data-camera="SONY ILCE-7M3"
-               data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(unbenannt-1626).jpeg">
-        <div class="overflow-hidden bg-[#121318]">
-          <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(unbenannt-1626).jpeg" 
-               alt="Aviation - unbenannt-1626" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
-        </div>
-        <div class="card-glare"></div>
-        <div class="viewfinder-corners">
-          <span class="vf-corner vf-tl"></span><span class="vf-corner vf-tr"></span><span class="vf-corner vf-bl"></span><span class="vf-corner vf-br"></span>
-        </div>
-        <div class="home-title-overlay absolute inset-x-0 bottom-0 pb-6 pt-20 px-5 flex flex-col items-start justify-end text-left pointer-events-none transition-opacity duration-300">
-          <span class="font-mono text-[10px] tracking-[0.25em] text-zinc-400 mb-1">02 / 10</span>
-          <span class="text-lg sm:text-xl tracking-[0.18em] uppercase text-white font-serif font-normal drop-shadow-md">Aviatik</span>
-          <span class="cover-open-gallery text-[10px] tracking-[0.22em] uppercase text-zinc-300 mt-1.5 opacity-75 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">Galerie öffnen &rarr;</span>
-        </div>
-        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Aviatik</span>
-          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/2500s</span><span>·</span><span>ƒ/6.3</span><span>·</span><span>ISO 250</span>
-          </div>
-        </div>
-      </article>
-
-      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0d0e12] border border-white/[0.08] cursor-pointer"
-               data-category="aviation"
-               data-shutter="—" data-aperture="—" data-focal="—" data-iso="—" data-camera="Aviation Archive"
+               data-shutter="1/3200s" data-aperture="ƒ/6.3" data-focal="300mm" data-iso="ISO 5000" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(F35--2).jpeg">
         <div class="overflow-hidden bg-[#121318]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(F35--2).jpeg" 
@@ -2062,15 +2079,16 @@
         </div>
         <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
           <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Aviatik</span>
-          <div class="font-mono text-xs text-zinc-400 tracking-wide mt-1 flex items-center space-x-2">
-            <span class="meta-unavailable">Keine Metadaten verfügbar</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
+            <span>1/3200s</span><span>·</span><span>ƒ/6.3</span><span>·</span><span>ISO 5000</span>
           </div>
         </div>
       </article>
 
       <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0d0e12] border border-white/[0.08] cursor-pointer"
                data-category="aviation"
-               data-shutter="—" data-aperture="—" data-focal="—" data-iso="—" data-camera="Aviation Archive"
+               data-is-cover="true"
+               data-shutter="1/2500s" data-aperture="ƒ/6.3" data-focal="300mm" data-iso="ISO 12800" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(F35--4).jpeg">
         <div class="overflow-hidden bg-[#121318]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(F35--4).jpeg" 
@@ -2080,10 +2098,36 @@
         <div class="viewfinder-corners">
           <span class="vf-corner vf-tl"></span><span class="vf-corner vf-tr"></span><span class="vf-corner vf-bl"></span><span class="vf-corner vf-br"></span>
         </div>
+        <!-- Home Title Overlay -->
+        <div class="home-title-overlay absolute inset-x-0 bottom-0 pb-6 pt-20 px-5 flex flex-col items-start justify-end text-left pointer-events-none transition-opacity duration-300">
+          <span class="font-mono text-[10px] tracking-[0.25em] text-zinc-400 mb-1">02 / 10</span>
+          <span class="text-lg sm:text-xl tracking-[0.18em] uppercase text-white font-serif font-normal drop-shadow-md">Aviatik</span>
+          <span class="cover-open-gallery text-[10px] tracking-[0.22em] uppercase text-zinc-300 mt-1.5 opacity-75 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">Galerie öffnen &rarr;</span>
+        </div>
+        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Aviatik</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
+            <span>1/2500s</span><span>·</span><span>ƒ/6.3</span><span>·</span><span>ISO 12800</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0d0e12] border border-white/[0.08] cursor-pointer"
+               data-category="aviation"
+               data-shutter="1/2500s" data-aperture="ƒ/6.3" data-focal="300mm" data-iso="ISO 250" data-camera="SONY ILCE-7M3"
+               data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(unbenannt-1626).jpeg">
+        <div class="overflow-hidden bg-[#121318]">
+          <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(unbenannt-1626).jpeg" 
+               alt="Aviation - unbenannt-1626" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
+        </div>
+        <div class="card-glare"></div>
+        <div class="viewfinder-corners">
+          <span class="vf-corner vf-tl"></span><span class="vf-corner vf-tr"></span><span class="vf-corner vf-bl"></span><span class="vf-corner vf-br"></span>
+        </div>
         <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
           <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Aviatik</span>
-          <div class="font-mono text-xs text-zinc-400 tracking-wide mt-1 flex items-center space-x-2">
-            <span class="meta-unavailable">Keine Metadaten verfügbar</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
+            <span>1/2500s</span><span>·</span><span>ƒ/6.3</span><span>·</span><span>ISO 250</span>
           </div>
         </div>
       </article>
@@ -2232,7 +2276,6 @@
       <!-- Cover Environments (Home Cover) -->
       <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0d0e12] border border-white/[0.08] cursor-pointer"
                data-category="environments"
-               data-is-cover="true"
                data-shutter="1/3200s" data-aperture="ƒ/4.5" data-focal="70mm" data-iso="ISO 100" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(DSC01975).jpeg">
         <div class="overflow-hidden bg-[#121318]">
@@ -2243,12 +2286,7 @@
         <div class="viewfinder-corners">
           <span class="vf-corner vf-tl"></span><span class="vf-corner vf-tr"></span><span class="vf-corner vf-bl"></span><span class="vf-corner vf-br"></span>
         </div>
-        <div class="home-title-overlay absolute inset-x-0 bottom-0 pb-6 pt-20 px-5 flex flex-col items-start justify-end text-left pointer-events-none transition-opacity duration-300">
-          <span class="font-mono text-[10px] tracking-[0.25em] text-zinc-400 mb-1">03 / 10</span>
-          <span class="text-lg sm:text-xl tracking-[0.18em] uppercase text-white font-serif font-normal drop-shadow-md">Umgebungen</span>
-          <span class="cover-open-gallery text-[10px] tracking-[0.22em] uppercase text-zinc-300 mt-1.5 opacity-75 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">Galerie öffnen &rarr;</span>
-        </div>
-        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
           <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Umgebungen</span>
           <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
             <span>1/3200s</span><span>·</span><span>ƒ/4.5</span><span>·</span><span>ISO 100</span>
@@ -2298,6 +2336,7 @@
 
       <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0d0e12] border border-white/[0.08] cursor-pointer"
                data-category="environments"
+               data-is-cover="true"
                data-shutter="1/1600s" data-aperture="ƒ/4.5" data-focal="70mm" data-iso="ISO 320" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(unbenannt-216).jpeg">
         <div class="overflow-hidden bg-[#121318]">
@@ -2308,7 +2347,12 @@
         <div class="viewfinder-corners">
           <span class="vf-corner vf-tl"></span><span class="vf-corner vf-tr"></span><span class="vf-corner vf-bl"></span><span class="vf-corner vf-br"></span>
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+        <div class="home-title-overlay absolute inset-x-0 bottom-0 pb-6 pt-20 px-5 flex flex-col items-start justify-end text-left pointer-events-none transition-opacity duration-300">
+          <span class="font-mono text-[10px] tracking-[0.25em] text-zinc-400 mb-1">03 / 10</span>
+          <span class="text-lg sm:text-xl tracking-[0.18em] uppercase text-white font-serif font-normal drop-shadow-md">Umgebungen</span>
+          <span class="cover-open-gallery text-[10px] tracking-[0.22em] uppercase text-zinc-300 mt-1.5 opacity-75 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">Galerie öffnen &rarr;</span>
+        </div>
+        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
           <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Umgebungen</span>
           <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
             <span>1/1600s</span><span>·</span><span>ƒ/4.5</span><span>·</span><span>ISO 320</span>
@@ -2440,26 +2484,20 @@
       <!-- Cover Food (Home Cover) -->
       <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0d0e12] border border-white/[0.08] cursor-pointer"
                data-category="food"
-               data-is-cover="true"
-               data-shutter="1/250s" data-aperture="ƒ/4.0" data-focal="33mm" data-iso="ISO 3200" data-camera="SONY ILCE-7M3"
-               data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC09835-Enhanced-NR).jpeg">
+               data-shutter="1/1000s" data-aperture="ƒ/4.5" data-focal="41mm" data-iso="ISO 8000" data-camera="SONY ILCE-7M3"
+               data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC09993-Enhanced-NR).jpeg">
         <div class="overflow-hidden bg-[#121318]">
-          <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC09835-Enhanced-NR).jpeg" 
-               alt="Food - DSC09835" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
+          <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC09993-Enhanced-NR).jpeg" 
+               alt="Food - DSC09993" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
         <div class="card-glare"></div>
         <div class="viewfinder-corners">
           <span class="vf-corner vf-tl"></span><span class="vf-corner vf-tr"></span><span class="vf-corner vf-bl"></span><span class="vf-corner vf-br"></span>
         </div>
-        <div class="home-title-overlay absolute inset-x-0 bottom-0 pb-6 pt-20 px-5 flex flex-col items-start justify-end text-left pointer-events-none transition-opacity duration-300">
-          <span class="font-mono text-[10px] tracking-[0.25em] text-zinc-400 mb-1">04 / 09</span>
-          <span class="text-lg sm:text-xl tracking-[0.18em] uppercase text-white font-serif font-normal drop-shadow-md">Essen</span>
-          <span class="cover-open-gallery text-[10px] tracking-[0.22em] uppercase text-zinc-300 mt-1.5 opacity-75 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">Galerie öffnen &rarr;</span>
-        </div>
-        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
           <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Essen</span>
           <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/250s</span><span>·</span><span>ƒ/4.0</span><span>·</span><span>ISO 3200</span>
+            <span>1/1000s</span><span>·</span><span>ƒ/4.5</span><span>·</span><span>ISO 8000</span>
           </div>
         </div>
       </article>
@@ -2546,6 +2584,27 @@
 
       <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0d0e12] border border-white/[0.08] cursor-pointer"
                data-category="food"
+               data-shutter="1/250s" data-aperture="ƒ/4.0" data-focal="33mm" data-iso="ISO 3200" data-camera="SONY ILCE-7M3"
+               data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC09835-Enhanced-NR).jpeg">
+        <div class="overflow-hidden bg-[#121318]">
+          <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC09835-Enhanced-NR).jpeg" 
+               alt="Food - DSC09835" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
+        </div>
+        <div class="card-glare"></div>
+        <div class="viewfinder-corners">
+          <span class="vf-corner vf-tl"></span><span class="vf-corner vf-tr"></span><span class="vf-corner vf-bl"></span><span class="vf-corner vf-br"></span>
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Essen</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
+            <span>1/250s</span><span>·</span><span>ƒ/4.0</span><span>·</span><span>ISO 3200</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0d0e12] border border-white/[0.08] cursor-pointer"
+               data-category="food"
+               data-is-cover="true"
                data-shutter="1/50s" data-aperture="ƒ/4.5" data-focal="51mm" data-iso="ISO 400" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC09860-Enhanced-NR).jpeg">
         <div class="overflow-hidden bg-[#121318]">
@@ -2556,7 +2615,13 @@
         <div class="viewfinder-corners">
           <span class="vf-corner vf-tl"></span><span class="vf-corner vf-tr"></span><span class="vf-corner vf-bl"></span><span class="vf-corner vf-br"></span>
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+        <!-- Home Title Overlay -->
+        <div class="home-title-overlay absolute inset-x-0 bottom-0 pb-6 pt-20 px-5 flex flex-col items-start justify-end text-left pointer-events-none transition-opacity duration-300">
+          <span class="font-mono text-[10px] tracking-[0.25em] text-zinc-400 mb-1">04 / 09</span>
+          <span class="text-lg sm:text-xl tracking-[0.18em] uppercase text-white font-serif font-normal drop-shadow-md">Essen</span>
+          <span class="cover-open-gallery text-[10px] tracking-[0.22em] uppercase text-zinc-300 mt-1.5 opacity-75 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">Galerie öffnen &rarr;</span>
+        </div>
+        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
           <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Essen</span>
           <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
             <span>1/50s</span><span>·</span><span>ƒ/4.5</span><span>·</span><span>ISO 400</span>
@@ -2580,26 +2645,6 @@
           <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Essen</span>
           <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
             <span>1/125s</span><span>·</span><span>ƒ/4.5</span><span>·</span><span>ISO 100</span>
-          </div>
-        </div>
-      </article>
-
-      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0d0e12] border border-white/[0.08] cursor-pointer"
-               data-category="food"
-               data-shutter="1/1000s" data-aperture="ƒ/4.5" data-focal="41mm" data-iso="Auto" data-camera="SONY ILCE-7M3"
-               data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC09993-Enhanced-NR).jpeg">
-        <div class="overflow-hidden bg-[#121318]">
-          <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC09993-Enhanced-NR).jpeg" 
-               alt="Food - DSC09993" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
-        </div>
-        <div class="card-glare"></div>
-        <div class="viewfinder-corners">
-          <span class="vf-corner vf-tl"></span><span class="vf-corner vf-tr"></span><span class="vf-corner vf-bl"></span><span class="vf-corner vf-br"></span>
-        </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Essen</span>
-          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/1000s</span><span>·</span><span>ƒ/4.5</span>
           </div>
         </div>
       </article>
@@ -3167,292 +3212,307 @@
       let currentPageIndex = 0;
 
       // ----------------------------------------------------
-      // Language (DE / EN) Switching Logic
+      // Theme (Dark / Light Mode) & Language (DE / EN) State
       // ----------------------------------------------------
-      const langToggleBtn = document.getElementById('lang-toggle-btn');
-      const langToggleBtnMobile = document.getElementById('lang-toggle-btn-mobile');
-      const langIndicatorsDe = document.querySelectorAll('.lang-indicator-de');
-      const langIndicatorsEn = document.querySelectorAll('.lang-indicator-en');
-      let currentLang = localStorage.getItem('portfolio_lang') || 'de';
+      let isLightMode = document.body.classList.contains('light-mode');
+      let currentLang = 'de';
 
       const i18n = {
         de: {
-          brandTitle: 'Zurück zur Startseite',
-          homeLabel: 'Home',
+          homePill: 'Home',
+          filters: {
+            animals: 'Tiere',
+            aviation: 'Aviatik',
+            environments: 'Umgebungen',
+            food: 'Essen',
+            design: 'Gestaltung'
+          },
           activeCategories: {
-            'home': 'Home — Übersicht',
-            'animals': 'Tiere Galerie',
-            'aviation': 'Aviatik Galerie',
-            'environments': 'Umgebungen Galerie',
-            'food': 'Essen Galerie',
-            'design': 'Gestaltung Galerie'
+            home: 'Home — Übersicht',
+            animals: 'Tiere Galerie',
+            aviation: 'Aviatik Galerie',
+            environments: 'Umgebungen Galerie',
+            food: 'Essen Galerie',
+            design: 'Gestaltung Galerie'
           },
           categoryLabels: {
-            'animals': 'Tiere',
-            'aviation': 'Aviatik',
-            'environments': 'Umgebungen',
-            'food': 'Essen',
-            'design': 'Gestaltung'
+            animals: 'Tiere',
+            aviation: 'Aviatik',
+            environments: 'Umgebungen',
+            food: 'Essen',
+            design: 'Gestaltung'
           },
-          openGallery: 'Galerie öffnen &rarr;',
           categoriesCount: (n) => `${String(n).padStart(2, '0')} Kategorien`,
           photosCount: (n) => `${String(n).padStart(2, '0')} Werke`,
+          openGallery: 'Galerie öffnen →',
+          noMetadata: 'Keine Metadaten verfügbar',
+          exifLabels: {
+            SHUTTER: 'VERSCHLUSS',
+            APERTURE: 'BLENDE',
+            FOCAL: 'BRENNWEITE',
+            ISO: 'ISO'
+          },
+          showreelLabel: 'Showreel abspielen',
           aboutBio: 'Lernender Mediamatiker mit viel Interesse an Fotografie & Videografie.',
           aboutLocationLabel: 'Standort',
           aboutLocationValue: 'Schweiz',
           aboutGalleriesLabel: 'Galerien',
           aboutGalleriesValue: 'Tiere, Aviatik, Umgebungen, Essen, Gestaltung',
-          aboutContactLabel: 'Kontakt',
-          noMetadata: 'Keine Metadaten verfügbar',
-          openPdf: 'Original-PDF öffnen',
-          closeLightbox: 'Schließen',
-          prevImage: 'Vorheriges Bild',
-          nextImage: 'Nächstes Bild',
-          langToggleAria: 'Sprache zu Englisch wechseln',
-          langToggleTitle: 'Sprache wechseln (DE / EN)',
-          designPages: (n) => `Gestaltung · ${n} Seiten`,
-          showreelPlay: 'Showreel abspielen',
-          exifLabels: {
-            SHUTTER: 'BELICHTUNGSZEIT',
-            APERTURE: 'BLENDE',
-            FOCAL: 'BRENNWEITE',
-            ISO: 'ISO'
-          }
+          aboutContactLabel: 'Kontakt'
         },
         en: {
-          brandTitle: 'Back to Home',
-          homeLabel: 'Home',
+          homePill: 'Home',
+          filters: {
+            animals: 'Animals',
+            aviation: 'Aviation',
+            environments: 'Environments',
+            food: 'Food',
+            design: 'Design'
+          },
           activeCategories: {
-            'home': 'Home — Overview',
-            'animals': 'Animals Gallery',
-            'aviation': 'Aviation Gallery',
-            'environments': 'Environments Gallery',
-            'food': 'Food Gallery',
-            'design': 'Design Gallery'
+            home: 'Home — Overview',
+            animals: 'Animals Gallery',
+            aviation: 'Aviation Gallery',
+            environments: 'Environments Gallery',
+            food: 'Food Gallery',
+            design: 'Design Gallery'
           },
           categoryLabels: {
-            'animals': 'Animals',
-            'aviation': 'Aviation',
-            'environments': 'Environments',
-            'food': 'Food',
-            'design': 'Design'
+            animals: 'Animals',
+            aviation: 'Aviation',
+            environments: 'Environments',
+            food: 'Food',
+            design: 'Design'
           },
-          openGallery: 'Open gallery &rarr;',
           categoriesCount: (n) => `${String(n).padStart(2, '0')} Categories`,
           photosCount: (n) => `${String(n).padStart(2, '0')} Works`,
-          aboutBio: 'Mediamatics apprentice with a strong passion for photography & videography.',
-          aboutLocationLabel: 'Location',
-          aboutLocationValue: 'Switzerland',
-          aboutGalleriesLabel: 'Galleries',
-          aboutGalleriesValue: 'Animals, Aviation, Environments, Food, Design',
-          aboutContactLabel: 'Contact',
+          openGallery: 'Open Gallery →',
           noMetadata: 'No metadata available',
-          openPdf: 'Open original PDF',
-          closeLightbox: 'Close Lightbox',
-          prevImage: 'Previous image',
-          nextImage: 'Next image',
-          langToggleAria: 'Switch language to German',
-          langToggleTitle: 'Switch language (DE / EN)',
-          designPages: (n) => `Design · ${n} Pages`,
-          showreelPlay: 'Play Showreel',
           exifLabels: {
             SHUTTER: 'SHUTTER',
             APERTURE: 'APERTURE',
             FOCAL: 'FOCAL',
             ISO: 'ISO'
-          }
+          },
+          showreelLabel: 'Play Showreel',
+          aboutBio: 'Apprentice Mediamatician with a strong passion for photography & videography.',
+          aboutLocationLabel: 'Location',
+          aboutLocationValue: 'Switzerland',
+          aboutGalleriesLabel: 'Galleries',
+          aboutGalleriesValue: 'Animals, Aviation, Environments, Food, Design',
+          aboutContactLabel: 'Contact'
         }
       };
 
-      function updateLanguageUI() {
-        const isDe = (currentLang === 'de');
-        const t = i18n[currentLang];
-        document.documentElement.lang = currentLang;
+      function updateThemeButtons() {
+        filterBtns.forEach(b => {
+          const isHomeBtn = b.getAttribute('data-filter') === 'home';
+          const isActive = b.classList.contains('active-filter');
+          if (isHomeBtn) return;
 
-        langIndicatorsDe.forEach(el => {
-          el.className = 'lang-indicator-de transition-colors ' + (isDe ? 'lang-active' : 'lang-inactive');
-        });
-        langIndicatorsEn.forEach(el => {
-          el.className = 'lang-indicator-en transition-colors ' + (isDe ? 'lang-inactive' : 'lang-active');
-        });
-
-        [langToggleBtn, langToggleBtnMobile].forEach(btn => {
-          if (btn) {
-            btn.setAttribute('aria-label', t.langToggleAria);
-            btn.title = t.langToggleTitle;
-          }
-        });
-
-        if (brandHomeLink) brandHomeLink.title = t.brandTitle;
-
-        const showreelPosterLabel = document.getElementById('cinema-poster-label');
-        if (showreelPosterLabel) showreelPosterLabel.textContent = t.showreelPlay;
-
-        document.querySelectorAll('.cover-open-gallery').forEach(el => {
-          el.innerHTML = t.openGallery;
-        });
-
-        const aboutBio = document.getElementById('about-bio');
-        if (aboutBio) aboutBio.textContent = t.aboutBio;
-        const aboutLocLabel = document.getElementById('about-location-label');
-        if (aboutLocLabel) aboutLocLabel.textContent = t.aboutLocationLabel;
-        const aboutLocVal = document.getElementById('about-location-value');
-        if (aboutLocVal) aboutLocVal.textContent = t.aboutLocationValue;
-        const aboutGalLabel = document.getElementById('about-galleries-label');
-        if (aboutGalLabel) aboutGalLabel.textContent = t.aboutGalleriesLabel;
-        const aboutGalVal = document.getElementById('about-galleries-value');
-        if (aboutGalVal) aboutGalVal.textContent = t.aboutGalleriesValue;
-        const aboutContactLabel = document.getElementById('about-contact-label');
-        if (aboutContactLabel) aboutContactLabel.textContent = t.aboutContactLabel;
-
-        filterBtns.forEach(btn => {
-          const cat = btn.getAttribute('data-filter');
-          if (cat === 'home') {
-            const homeLabelSpan = btn.querySelector('.home-pill-label');
-            if (homeLabelSpan) homeLabelSpan.textContent = t.homeLabel;
-          } else if (cat && t.categoryLabels[cat]) {
-            btn.textContent = t.categoryLabels[cat];
-          }
-        });
-
-        galleryItems.forEach(item => {
-          const cat = item.getAttribute('data-category');
-          if (cat && t.categoryLabels[cat]) {
-            const homeOverlayTitle = item.querySelector('.home-title-overlay > span:nth-child(2)');
-            if (homeOverlayTitle) homeOverlayTitle.textContent = t.categoryLabels[cat];
-            // Update both cover hover overlays and standard gallery item hover overlays
-            const hoverTag = item.querySelector('.gallery-hover-overlay > span:first-child, :scope > div:last-child > span:first-child');
-            if (hoverTag && !item.hasAttribute('data-camera-pages') && !hoverTag.hasAttribute('data-pages-count')) {
-              hoverTag.textContent = t.categoryLabels[cat];
+          if (isActive) {
+            if (isLightMode) {
+              b.classList.remove('bg-white', 'text-[#050505]', 'border-white/20');
+            } else {
+              b.classList.add('bg-white', 'text-[#050505]', 'font-medium', 'border-white/20');
+              b.classList.remove('text-zinc-400', 'border-white/10');
+            }
+          } else {
+            b.classList.remove('bg-white', 'text-[#050505]', 'font-medium', 'border-white/20');
+            if (!isLightMode) {
+              b.classList.add('border-white/10', 'text-zinc-400');
             }
           }
         });
+      }
 
-        document.querySelectorAll('[data-pages-count]').forEach(el => {
-          const count = el.getAttribute('data-pages-count');
-          el.textContent = t.designPages(count);
+      function updateLanguageUI() {
+        const t = i18n[currentLang];
+        document.documentElement.lang = currentLang;
+
+        document.querySelectorAll('.lang-indicator-de').forEach(el => {
+          el.classList.toggle('lang-active', currentLang === 'de');
+          el.classList.toggle('lang-inactive', currentLang !== 'de');
+        });
+        document.querySelectorAll('.lang-indicator-en').forEach(el => {
+          el.classList.toggle('lang-active', currentLang === 'en');
+          el.classList.toggle('lang-inactive', currentLang !== 'en');
         });
 
-        document.querySelectorAll('[data-camera-pages]').forEach(el => {
-          const title = isDe ? el.getAttribute('data-title-de') : el.getAttribute('data-title-en');
-          if (title) el.setAttribute('data-camera', title);
+        filterBtns.forEach(btn => {
+          const f = btn.getAttribute('data-filter');
+          if (f === 'home') {
+            const label = btn.querySelector('.home-pill-label');
+            if (label) label.textContent = t.homePill;
+          } else if (t.filters[f]) {
+            btn.textContent = t.filters[f];
+          }
         });
 
+        document.querySelectorAll('.cover-open-gallery').forEach(el => {
+          el.textContent = t.openGallery;
+        });
         document.querySelectorAll('.meta-unavailable').forEach(el => {
           el.textContent = t.noMetadata;
         });
 
-        if (lightboxPdfLink) lightboxPdfLink.title = t.openPdf;
-        if (lightboxClose) lightboxClose.setAttribute('aria-label', t.closeLightbox);
-        if (lightboxPrev) lightboxPrev.setAttribute('aria-label', t.prevImage);
-        if (lightboxNext) lightboxNext.setAttribute('aria-label', t.nextImage);
+        // Update cover titles & category labels inside cards
+        galleryItems.forEach(item => {
+          const cat = item.getAttribute('data-category');
+          const catLabel = t.categoryLabels[cat];
+          if (!catLabel) return;
 
-        if (lightbox && lightbox.classList.contains('is-open')) {
-          if (currentFilteredItems[currentLightboxIndex]) {
-            const cat = currentFilteredItems[currentLightboxIndex].getAttribute('data-category');
-            if (cat && t.categoryLabels[cat]) {
-              lightboxCategory.textContent = t.categoryLabels[cat].toUpperCase();
-            }
-          }
-          if (lightboxPageIndicator && currentItemPages.length > 1) {
-            const pageWord = currentLang === 'de' ? 'SEITE' : 'PAGE';
-            lightboxPageIndicator.textContent = `${pageWord} ${String(currentPageIndex + 1).padStart(2, '0')} / ${String(currentItemPages.length).padStart(2, '0')}`;
-          }
-          if (lightboxExif) {
-            lightboxExif.querySelectorAll('[data-exif-key]').forEach(labelEl => {
-              const key = labelEl.getAttribute('data-exif-key');
-              if (key && t.exifLabels && t.exifLabels[key]) {
-                labelEl.textContent = t.exifLabels[key];
-              }
-            });
-            if (!lightboxExif.textContent.trim() || lightboxExif.textContent.trim() === i18n.de.noMetadata || lightboxExif.textContent.trim() === i18n.en.noMetadata) {
-              lightboxExif.innerHTML = `<span class="opacity-70">${t.noMetadata}</span>`;
-            }
-          }
-        }
+          const homeTitleSpan = item.querySelector('.home-title-overlay span.font-serif');
+          if (homeTitleSpan) homeTitleSpan.textContent = catLabel;
 
-        if (activeCategoryLabel) {
-          activeCategoryLabel.textContent = t.activeCategories[currentFilter] || 'Portfolio';
-        }
-        if (itemCounter) {
-          itemCounter.textContent = currentFilter === 'home'
-            ? t.categoriesCount(currentFilteredItems.length)
-            : t.photosCount(currentFilteredItems.length);
-        }
-      }
-
-      function switchLanguage(targetLang) {
-        currentLang = targetLang || (currentLang === 'de' ? 'en' : 'de');
-        try {
-          localStorage.setItem('portfolio_lang', currentLang);
-        } catch(e) {}
-        updateLanguageUI();
-      }
-      [langToggleBtn, langToggleBtnMobile].forEach(btn => {
-        if (!btn) return;
-        btn.addEventListener('click', (e) => {
-          const target = e.target;
-          if (target && target.classList.contains('lang-indicator-de')) {
-            switchLanguage('de');
-          } else if (target && target.classList.contains('lang-indicator-en')) {
-            switchLanguage('en');
-          } else {
-            switchLanguage();
+          const hoverCatSpan = item.querySelector('.gallery-hover-overlay > span:first-child, :scope > div:last-child > span:first-child');
+          if (hoverCatSpan && !hoverCatSpan.hasAttribute('data-pages-count')) {
+            hoverCatSpan.textContent = catLabel;
+          } else if (hoverCatSpan && hoverCatSpan.hasAttribute('data-pages-count')) {
+            const count = hoverCatSpan.getAttribute('data-pages-count');
+            hoverCatSpan.textContent = currentLang === 'de' ? `Design · ${count} Seiten` : `Design · ${count} Pages`;
           }
         });
-      });
 
-      // ----------------------------------------------------
-      // Dark / Light Mode Switcher Logic
-      // ----------------------------------------------------
+        const posterLabel = document.getElementById('cinema-poster-label');
+        if (posterLabel) posterLabel.textContent = t.showreelLabel;
+
+        const aboutBio = document.getElementById('about-bio');
+        if (aboutBio) aboutBio.textContent = t.aboutBio;
+
+        const locLabel = document.getElementById('about-location-label');
+        if (locLabel) locLabel.textContent = t.aboutLocationLabel;
+
+        const locVal = document.getElementById('about-location-value');
+        if (locVal) locVal.textContent = t.aboutLocationValue;
+
+        const galLabel = document.getElementById('about-galleries-label');
+        if (galLabel) galLabel.textContent = t.aboutGalleriesLabel;
+
+        const galVal = document.getElementById('about-galleries-value');
+        if (galVal) galVal.textContent = t.aboutGalleriesValue;
+
+        const contactLabel = document.getElementById('about-contact-label');
+        if (contactLabel) contactLabel.textContent = t.aboutContactLabel;
+
+        activeCategoryLabel.textContent = t.activeCategories[currentFilter] || 'Portfolio';
+        itemCounter.textContent = currentFilter === 'home'
+          ? t.categoriesCount(currentFilteredItems.length)
+          : t.photosCount(currentFilteredItems.length);
+      }
+
       const themeToggleBtn = document.getElementById('theme-toggle');
-      let isLightMode = false;
-
-      function updateThemeButtons() {
-        filterBtns.forEach(b => {
-          const isHomeBtn = (b.getAttribute('data-filter') === 'home');
-          const isActive = (b.getAttribute('data-filter') === currentFilter);
-          if (isActive) {
-            b.classList.add('active-filter');
-            if (!isHomeBtn) {
-              if (isLightMode) {
-                b.classList.remove('bg-white', 'text-[#050505]');
-              } else {
-                b.classList.add('bg-white', 'text-[#050505]');
-              }
-            }
-          } else {
-            b.classList.remove('active-filter', 'bg-white', 'text-[#050505]');
-          }
-        });
-      }
-
       if (themeToggleBtn) {
         themeToggleBtn.addEventListener('click', () => {
           isLightMode = !isLightMode;
           document.body.classList.toggle('light-mode', isLightMode);
           updateThemeButtons();
-          updateLanguageUI();
         });
       }
 
+      ['lang-toggle-btn', 'lang-toggle-btn-mobile'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+          btn.addEventListener('click', () => {
+            currentLang = currentLang === 'de' ? 'en' : 'de';
+            updateLanguageUI();
+            if (lightbox.classList.contains('is-open')) {
+              updateLightboxContent(currentLightboxIndex);
+            }
+          });
+        }
+      });
+
       // ----------------------------------------------------
-      // Filter Logic
+      // Filter & Balanced Masonry Layout Logic
       // ----------------------------------------------------
+      const galleryContainer = document.getElementById('gallery');
+      let lastMasonryCols = 0;
+
+      function getCategoryColumnCount(visibleCount) {
+        const maxCols = visibleCount <= 2 ? 1 : visibleCount <= 4 ? 2 : visibleCount <= 6 ? 3 : 4;
+        const w = window.innerWidth;
+        let responsiveCols = 2;
+        if (w >= 1536) responsiveCols = 4;
+        else if (w >= 1024) responsiveCols = 3;
+        return Math.min(responsiveCols, maxCols);
+      }
+
+      function resetGalleryStructure() {
+        galleryContainer.querySelectorAll('.masonry-column').forEach(col => col.remove());
+        galleryItems.forEach(item => galleryContainer.appendChild(item));
+        lastMasonryCols = 0;
+      }
+
+      function layoutCategoryMasonry(visibleItems) {
+        const colCount = getCategoryColumnCount(visibleItems.length);
+        lastMasonryCols = colCount;
+
+        galleryContainer.querySelectorAll('.masonry-column').forEach(col => col.remove());
+
+        const columns = [];
+        const colHeights = new Array(colCount).fill(0);
+
+        for (let i = 0; i < colCount; i++) {
+          const col = document.createElement('div');
+          col.className = 'masonry-column';
+          galleryContainer.appendChild(col);
+          columns.push(col);
+        }
+
+        visibleItems.forEach(item => {
+          let shortestIdx = 0;
+          for (let i = 1; i < colCount; i++) {
+            if (colHeights[i] < colHeights[shortestIdx]) {
+              shortestIdx = i;
+            }
+          }
+
+          columns[shortestIdx].appendChild(item);
+
+          const img = item.querySelector('img');
+          const ratio = (img && img.naturalWidth > 0)
+            ? (img.naturalHeight / img.naturalWidth)
+            : 0.72;
+          colHeights[shortestIdx] += ratio + 0.05;
+
+          if (img && !img.complete && !img.dataset.masonryBound) {
+            img.dataset.masonryBound = 'true';
+            img.addEventListener('load', () => {
+              if (currentFilter !== 'home') {
+                layoutCategoryMasonry(currentFilteredItems);
+              }
+            }, { once: true });
+          }
+        });
+
+        // Keep hidden items attached cleanly outside columns
+        galleryItems.forEach(item => {
+          if (!visibleItems.includes(item)) {
+            galleryContainer.appendChild(item);
+          }
+        });
+      }
+
+      window.addEventListener('resize', () => {
+        if (currentFilter !== 'home' && currentFilteredItems.length > 0) {
+          const neededCols = getCategoryColumnCount(currentFilteredItems.length);
+          if (neededCols !== lastMasonryCols) {
+            layoutCategoryMasonry(currentFilteredItems);
+          }
+        }
+      }, { passive: true });
+
       function applyFilter(filterValue) {
         currentFilter = filterValue;
 
-        const galleryContainer = document.getElementById('gallery');
         if (filterValue === 'home') {
+          resetGalleryStructure();
           galleryContainer.classList.remove('category-grid');
           galleryContainer.classList.add('home-grid');
-          galleryContainer.style.removeProperty('--cat-cols');
         } else {
           galleryContainer.classList.remove('home-grid');
           galleryContainer.classList.add('category-grid');
-          const visibleCount = galleryItems.filter(i => i.getAttribute('data-category') === filterValue).length;
-          const maxCols = visibleCount <= 2 ? 1 : visibleCount <= 4 ? 2 : visibleCount <= 6 ? 3 : 4;
-          galleryContainer.style.setProperty('--cat-cols', maxCols);
         }
 
         filterBtns.forEach(b => {
@@ -3512,6 +3572,10 @@
           }
           return item.getAttribute('data-category') === filterValue;
         });
+
+        if (filterValue !== 'home') {
+          layoutCategoryMasonry(currentFilteredItems);
+        }
 
         const t = i18n[currentLang];
         activeCategoryLabel.textContent = t.activeCategories[filterValue] || 'Portfolio';
