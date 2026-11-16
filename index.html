@@ -1244,10 +1244,17 @@
     /* Hide native YouTube chrome via subtle overscale crop */
     .cinema-yt-crop {
       position: absolute;
-      inset: -14% -4%;
-      width: 108%;
-      height: 128%;
+      inset: -26% -6%;
+      width: 112%;
+      height: 152%;
       pointer-events: none;
+    }
+    @media (min-width: 640px) {
+      .cinema-yt-crop {
+        inset: -14% -4%;
+        width: 108%;
+        height: 128%;
+      }
     }
     .cinema-yt-crop iframe,
     .cinema-yt-crop > div {
