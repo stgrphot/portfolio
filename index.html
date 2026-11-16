@@ -12,12 +12,12 @@
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <link rel="shortcut icon" href="favicon.ico">
   <link rel="manifest" href="site.webmanifest">
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#050505">
 
-  <!-- Google Fonts: Inter & Playfair Display for subtle luxury touch -->
+  <!-- Google Fonts: Inter, Playfair Display & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=JetBrains+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -29,16 +29,17 @@
         extend: {
           colors: {
             brand: {
-              bg: '#000000',
-              card: '#0d0d0d',
-              border: 'rgba(255, 255, 255, 0.1)',
+              bg: '#050505',
+              card: '#0c0c0e',
+              border: 'rgba(255, 255, 255, 0.08)',
               accent: '#ffffff',
               muted: '#737373'
             }
           },
           fontFamily: {
             sans: ['Inter', 'sans-serif'],
-            serif: ['Playfair Display', 'serif']
+            serif: ['Playfair Display', 'serif'],
+            mono: ['JetBrains Mono', 'monospace']
           }
         }
       }
@@ -46,12 +47,12 @@
   </script>
 
   <style>
-    /* Custom Scrollbar */
+    /* ── Custom Scrollbar ── */
     ::-webkit-scrollbar {
-      width: 7px;
+      width: 6px;
     }
     ::-webkit-scrollbar-track {
-      background: #000000;
+      background: #050505;
     }
     ::-webkit-scrollbar-thumb {
       background: #262626;
@@ -61,15 +62,97 @@
       background: #404040;
     }
 
-    /* Responsive Grid Layouts - Strictly Left-Aligned */
+    /* ── Subtle Analog Film Grain Overlay ── */
+    .film-grain {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9998;
+      opacity: 0.028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+    body.light-mode .film-grain {
+      opacity: 0.02;
+    }
+
+    /* ── Custom Editorial Cursor (Desktop Only) ── */
+    @media (hover: hover) and (pointer: fine) {
+      #custom-cursor {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 24px;
+        height: 24px;
+        margin-left: -12px;
+        margin-top: -12px;
+        border-radius: 9999px;
+        background: rgba(255, 255, 255, 0.25);
+        border: 1.5px solid rgba(255, 255, 255, 0.9);
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0;
+        transform: scale(0.4);
+        transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(4px);
+      }
+      #custom-cursor.is-active {
+        opacity: 1;
+        transform: scale(1);
+      }
+      body.light-mode #custom-cursor {
+        background: rgba(10, 10, 10, 0.15);
+        border-color: rgba(10, 10, 10, 0.85);
+      }
+    }
+    @media (hover: none), (pointer: coarse) {
+      #custom-cursor {
+        display: none !important;
+      }
+    }
+
+    /* ── Scroll Progress Bar ── */
+    #scroll-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 1.5px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.2), #ffffff);
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+    body.light-mode #scroll-progress {
+      background: linear-gradient(90deg, rgba(0,0,0,0.2), #000000);
+    }
+
+    /* ── Hero Ambient Glow ── */
+    .ambient-spotlight {
+      position: fixed;
+      top: -20vh;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80vw;
+      height: 55vh;
+      background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+      transition: opacity 0.5s ease;
+    }
+    body.light-mode .ambient-spotlight {
+      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.03) 0%, rgba(0, 0, 0, 0) 70%);
+    }
+
+    /* ── Responsive Grid Layouts ── */
     .portfolio-grid {
       width: 100%;
     }
 
-    /* Standard Category Grid: Real Masonry via CSS Columns to prevent row gaps */
+    /* Standard Category Grid: Real Masonry via CSS Columns */
     .portfolio-grid.category-grid {
       display: block;
-      column-gap: 1.5rem;
+      column-gap: 1.75rem;
       column-count: 1;
     }
     @media (min-width: 640px) {
@@ -91,12 +174,12 @@
     .portfolio-grid.category-grid .gallery-item {
       display: inline-block;
       width: 100%;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.75rem;
       break-inside: avoid;
       -webkit-column-break-inside: avoid;
     }
 
-    /* Home Grid: Always strictly 2-columns, 4-columns or 5-columns */
+    /* Home Grid: Editorial Showcase */
     .portfolio-grid.home-grid {
       display: grid;
       gap: 1.5rem;
@@ -119,7 +202,7 @@
       }
     }
 
-    /* Einheitliches Seitenverhältnis für alle Cover-Images auf der Startseite */
+    /* Einheitliches Seitenverhältnis für Cover-Images auf der Startseite */
     .portfolio-grid.home-grid .gallery-item {
       display: flex;
       flex-direction: column;
@@ -127,7 +210,7 @@
     .portfolio-grid.home-grid .gallery-item > div:first-child {
       position: relative;
       width: 100%;
-      aspect-ratio: 4 / 5; /* Alle 4 Cover haben nun exakt die gleiche einheitliche Höhe & Proportion */
+      aspect-ratio: 3 / 4.2;
     }
     .portfolio-grid.home-grid .gallery-item img {
       width: 100%;
@@ -135,15 +218,29 @@
       object-fit: cover;
     }
 
+    /* ── Gallery Item Card & Staggered Reveal ── */
     .gallery-item {
       width: 100%;
-      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      transition:
+        opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 0.4s ease,
+        box-shadow 0.4s ease;
       content-visibility: auto;
     }
 
-    /* Fix für Home-Cover Hover-Effekt: Kein unschöner Balken unten */
+    .gallery-item:hover {
+      border-color: rgba(255, 255, 255, 0.24);
+      box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.75);
+    }
+    body.light-mode .gallery-item:hover {
+      border-color: rgba(0, 0, 0, 0.25);
+      box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.14);
+    }
+
+    /* Home Cover Overlay */
     .home-title-overlay {
-      background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.35) 60%, transparent 100%);
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.42) 48%, transparent 100%);
       bottom: 0;
       left: 0;
       right: 0;
@@ -153,17 +250,47 @@
     .gallery-item.hidden-item {
       display: none !important;
       opacity: 0;
-      transform: scale(0.96);
+      transform: translateY(18px) scale(0.97);
     }
 
     .gallery-item.visible-item {
       opacity: 1;
-      transform: scale(1);
+      transform: translateY(0) scale(1);
+    }
+
+    /* ── Viewfinder Corner Reticles on Hover ── */
+    .viewfinder-corners::before,
+    .viewfinder-corners::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-color: rgba(255, 255, 255, 0.65);
+      border-style: solid;
+      opacity: 0;
+      transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+      z-index: 15;
+    }
+    .viewfinder-corners::before {
+      top: 14px;
+      left: 14px;
+      border-width: 1px 0 0 1px;
+      transform: translate(-4px, -4px);
+    }
+    .viewfinder-corners::after {
+      top: 14px;
+      right: 14px;
+      border-width: 1px 1px 0 0;
+      transform: translate(4px, -4px);
+    }
+    .gallery-item:hover .viewfinder-corners::before,
+    .gallery-item:hover .viewfinder-corners::after {
+      opacity: 1;
+      transform: translate(0, 0);
     }
 
     /* ── Page-flip: realistic page peel that reveals the next page beneath ── */
-
-    /* Stage shrink-wraps to the front image so % positioning works */
     #lightbox-flip-stage {
       position: relative;
       display: inline-flex;
@@ -171,7 +298,6 @@
       justify-content: center;
     }
 
-    /* New page sits behind the current one */
     #flip-back-img {
       position: absolute;
       inset: 0;
@@ -179,31 +305,24 @@
       height: 100%;
       object-fit: contain;
       object-position: center;
-      border-radius: 8px;
+      border-radius: 10px;
       border: 1px solid rgba(255,255,255,0.1);
       box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
       z-index: 0;
     }
 
-    /* Front image sits above the back image */
     #lightbox-img {
       position: relative;
       z-index: 1;
       display: block;
     }
 
-    /*
-      Fold-shadow strip — a narrow vertical bar that travels across the page,
-      simulating the 3-D crease of a turning page.
-      Left half: dark shadow cast by the curling page.
-      Right half: lighter highlight on the back of the page.
-    */
     #flip-fold-edge {
       position: absolute;
       top: 1%;
       bottom: 1%;
       width: 56px;
-      margin-left: -28px;      /* centred on the crease */
+      margin-left: -28px;
       z-index: 2;
       pointer-events: none;
       opacity: 0;
@@ -212,47 +331,45 @@
         transparent                    0%,
         rgba(0,0,0,0.04)              12%,
         rgba(0,0,0,0.22)              35%,
-        rgba(0,0,0,0.60)              50%,   /* crease centre */
-        rgba(255,255,255,0.08)        62%,   /* back-of-page highlight */
+        rgba(0,0,0,0.60)              50%,
+        rgba(255,255,255,0.08)        62%,
         rgba(255,255,255,0.03)        78%,
         transparent                   100%
       );
     }
 
-    /* ── Forward: right edge peels to the left ── */
     @keyframes pageExitFwd {
-      0%   { clip-path: inset(0 0%   0 0 round 8px); }
-      100% { clip-path: inset(0 101% 0 0 round 8px); }
+      0%   { clip-path: inset(0 0%   0 0 round 10px); }
+      100% { clip-path: inset(0 101% 0 0 round 10px); }
     }
     @keyframes foldEdgeFwd {
       0%   { left: calc(100% - 28px); opacity: 0; }
       5%   { opacity: 1; }
       95%  { opacity: 1; }
-      100% { left: -28px;            opacity: 0; }
+      100% { left: -28px;             opacity: 0; }
     }
 
-    /* ── Backward: left edge peels to the right ── */
     @keyframes pageExitBwd {
-      0%   { clip-path: inset(0 0 0 0%   round 8px); }
-      100% { clip-path: inset(0 0 0 101% round 8px); }
+      0%   { clip-path: inset(0 0 0 0%   round 10px); }
+      100% { clip-path: inset(0 0 0 101% round 10px); }
     }
     @keyframes foldEdgeBwd {
-      0%   { left: -28px;            opacity: 0; }
+      0%   { left: -28px;             opacity: 0; }
       5%   { opacity: 1; }
       95%  { opacity: 1; }
       100% { left: calc(100% - 28px); opacity: 0; }
     }
 
-    /* ease-in gives a natural "picked up slowly, then flung" feel */
     #lightbox-img.flip-exit-fwd  { animation: pageExitFwd 0.52s cubic-bezier(0.4,0,0.75,0.3) forwards; }
     #lightbox-img.flip-exit-bwd  { animation: pageExitBwd 0.52s cubic-bezier(0.4,0,0.75,0.3) forwards; }
     #flip-fold-edge.edge-fwd     { animation: foldEdgeFwd 0.52s cubic-bezier(0.4,0,0.75,0.3) forwards; }
     #flip-fold-edge.edge-bwd     { animation: foldEdgeBwd 0.52s cubic-bezier(0.4,0,0.75,0.3) forwards; }
+
     #lightbox {
-      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s;
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s;
     }
     #lightbox-img-wrapper {
-      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s;
     }
     #lightbox.is-open {
       opacity: 1;
@@ -264,86 +381,106 @@
       opacity: 1;
     }
 
-    /* Lightbox Info Bar styling */
+    /* ── Lightbox Info Bar styling ── */
     .lightbox-info-bar {
-      background-color: #ffffff;
-      color: #000000;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background-color: rgba(18, 18, 22, 0.85);
+      color: #f5f5f5;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(16px);
     }
     .lightbox-info-bar #lightbox-category {
-      color: #171717;
-      border-color: rgba(0, 0, 0, 0.2);
-      background-color: rgba(0, 0, 0, 0.05);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.22);
+      background-color: rgba(255, 255, 255, 0.08);
     }
     .lightbox-info-bar #lightbox-exif {
-      color: #171717;
+      color: #d4d4d8;
     }
     .lightbox-info-bar #lightbox-page-indicator {
-      color: #262626;
+      color: #e4e4e7;
     }
     .lightbox-info-bar #lightbox-page-prev,
     .lightbox-info-bar #lightbox-page-next {
-      color: #525252;
+      color: #a1a1aa;
     }
     .lightbox-info-bar #lightbox-page-prev:hover,
     .lightbox-info-bar #lightbox-page-next:hover {
-      color: #000000;
+      color: #ffffff;
     }
     .lightbox-info-bar #lightbox-pdf-link {
-      color: #525252;
-      border-color: rgba(0, 0, 0, 0.2);
+      color: #e4e4e7;
+      border-color: rgba(255, 255, 255, 0.2);
     }
     .lightbox-info-bar #lightbox-pdf-link:hover {
-      color: #000000;
+      color: #ffffff;
     }
 
-    /* Light Mode Overrides */
-    body.light-mode .lightbox-info-bar {
-      background-color: #ffffff;
-      color: #000000;
-      border: 1px solid rgba(0, 0, 0, 0.12);
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-    }
+    /* ── Light Mode Overrides ── */
     body.light-mode {
-      background-color: #ffffff;
-      color: #000000;
+      background-color: #fafafa;
+      color: #09090b;
+    }
+    body.light-mode .lightbox-info-bar {
+      background-color: rgba(255, 255, 255, 0.92);
+      color: #09090b;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.15);
+    }
+    body.light-mode .lightbox-info-bar #lightbox-category {
+      color: #09090b;
+      border-color: rgba(0, 0, 0, 0.2);
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    body.light-mode .lightbox-info-bar #lightbox-exif {
+      color: #27272a;
+    }
+    body.light-mode .lightbox-info-bar #lightbox-pdf-link {
+      color: #27272a;
+      border-color: rgba(0, 0, 0, 0.2);
     }
     body.light-mode header {
-      background-color: rgba(255, 255, 255, 0.92);
+      background-color: rgba(250, 250, 250, 0.88);
       border-color: rgba(0, 0, 0, 0.08);
     }
     body.light-mode #brand-home-link h1 {
-      color: #737373;
+      color: #71717a;
     }
     body.light-mode #brand-home-link p {
-      color: #000000;
+      color: #09090b;
+    }
+    body.light-mode #hero-title {
+      color: #09090b;
+    }
+    body.light-mode #hero-subtitle {
+      color: #52525b;
     }
     body.light-mode .filter-btn {
-      border-color: rgba(0, 0, 0, 0.15);
-      color: #525252;
+      border-color: rgba(0, 0, 0, 0.14);
+      color: #52525b;
     }
     body.light-mode .filter-btn:hover {
-      color: #000000;
-      border-color: #000000;
+      color: #09090b;
+      border-color: #09090b;
       background-color: rgba(0, 0, 0, 0.04);
     }
     body.light-mode .filter-btn.active-filter {
-      background-color: #000000 !important;
+      background-color: #09090b !important;
       color: #ffffff !important;
-      border-color: #000000 !important;
+      border-color: #09090b !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
     }
     body.light-mode .gallery-item {
       background-color: #ffffff;
-      border-color: rgba(0, 0, 0, 0.1);
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
+      border-color: rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
     }
     body.light-mode footer {
-      background-color: #ffffff;
+      background-color: #fafafa;
       border-color: rgba(0, 0, 0, 0.08);
-      color: #737373;
+      color: #71717a;
     }
     body.light-mode .footer-skyline {
-      fill: #000000;
+      fill: #09090b;
       opacity: 0.85;
     }
     .footer-skyline {
@@ -351,14 +488,14 @@
       opacity: 0.85;
     }
     body.light-mode .footer-link {
-      color: #737373;
+      color: #71717a;
     }
     body.light-mode .footer-link:hover {
-      color: #000000;
+      color: #09090b;
     }
     body.light-mode #active-category-label,
     body.light-mode #item-counter {
-      color: #737373;
+      color: #71717a;
     }
 
     /* Language Toggle in Top Navigation */
@@ -366,117 +503,140 @@
       user-select: none;
     }
     body.light-mode .lang-toggle-btn {
-      border-color: rgba(0, 0, 0, 0.15);
-      color: #525252;
+      border-color: rgba(0, 0, 0, 0.14);
+      color: #52525b;
     }
     body.light-mode .lang-toggle-btn:hover {
-      border-color: #000000;
-      color: #000000;
+      border-color: #09090b;
+      color: #09090b;
       background-color: rgba(0, 0, 0, 0.04);
     }
     body.light-mode .lang-separator {
       background-color: rgba(0, 0, 0, 0.15);
     }
     body.light-mode .lang-active {
-      color: #000000 !important;
+      color: #09090b !important;
       font-weight: 600 !important;
     }
     body.light-mode .lang-inactive {
-      color: #737373 !important;
-      font-weight: 400 !important;
-    }
-    body:not(.light-mode) .lang-active {
-      color: #ffffff !important;
-      font-weight: 600 !important;
-    }
-    body:not(.light-mode) .lang-inactive {
       color: #71717a !important;
       font-weight: 400 !important;
     }
 
+    /* ── Signature Home Pill Styling ── */
+    .home-pill-btn {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border-color: rgba(255, 255, 255, 0.22);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+    .home-pill-btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -120%;
+      width: 70%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+      transform: skewX(-22deg);
+      transition: left 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+    .home-pill-btn:hover::after {
+      left: 150%;
+    }
+    .home-pill-btn.active-filter {
+      background: linear-gradient(135deg, #ffffff 0%, #e4e4e7 100%) !important;
+      color: #050505 !important;
+      border-color: #ffffff !important;
+      box-shadow: 0 0 24px rgba(255, 255, 255, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+    }
+    body.light-mode .home-pill-btn {
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.01) 100%);
+      border-color: rgba(0, 0, 0, 0.2);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+    body.light-mode .home-pill-btn::after {
+      background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.12), transparent);
+    }
+    body.light-mode .home-pill-btn.active-filter {
+      background: linear-gradient(135deg, #18181b 0%, #09090b 100%) !important;
+      color: #ffffff !important;
+      border-color: #09090b !important;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    }
+
     /* ── Theme Toggle: refined pill with sliding knob ── */
     .theme-toggle-btn {
-      position: fixed;
-      bottom: 1.75rem;
-      right: 1.75rem;
+      position: relative;
+      margin: 0.25rem auto 0;
       z-index: 45;
-      /* Pill shape */
-      width: 112px;
-      height: 44px;
+      width: 108px;
+      height: 42px;
       border-radius: 9999px;
       cursor: pointer;
       display: flex;
       align-items: center;
       padding: 4px;
-      /* Dark-mode track */
-      background: #0a0a0a;
+      background: rgba(12, 12, 14, 0.85);
+      backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.14);
       box-shadow:
         0 0 0 1px rgba(255,255,255,0.04) inset,
-        0 8px 32px rgba(0, 0, 0, 0.7),
-        0 2px 8px rgba(0, 0, 0, 0.5);
+        0 8px 32px rgba(0, 0, 0, 0.75);
       transition:
         background 0.45s cubic-bezier(0.4,0,0.2,1),
         border-color 0.45s cubic-bezier(0.4,0,0.2,1),
         box-shadow 0.45s cubic-bezier(0.4,0,0.2,1);
     }
+    @media (min-width: 640px) {
+      .theme-toggle-btn {
+        position: fixed;
+        bottom: 1.75rem;
+        right: 1.75rem;
+        margin: 0;
+      }
+    }
     .theme-toggle-btn:hover {
-      border-color: rgba(255, 255, 255, 0.28);
-      box-shadow:
-        0 0 0 1px rgba(255,255,255,0.06) inset,
-        0 12px 40px rgba(0, 0, 0, 0.75),
-        0 0 20px rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.3);
     }
     body.light-mode .theme-toggle-btn {
-      background: #f5f5f5;
+      background: rgba(245, 245, 245, 0.9);
       border-color: rgba(0, 0, 0, 0.12);
       box-shadow:
         0 0 0 1px rgba(0,0,0,0.03) inset,
-        0 4px 20px rgba(0, 0, 0, 0.1),
-        0 1px 4px rgba(0, 0, 0, 0.07);
+        0 6px 24px rgba(0, 0, 0, 0.12);
     }
     body.light-mode .theme-toggle-btn:hover {
-      border-color: rgba(0, 0, 0, 0.22);
-      box-shadow:
-        0 0 0 1px rgba(0,0,0,0.04) inset,
-        0 6px 24px rgba(0, 0, 0, 0.14),
-        0 0 16px rgba(0, 0, 0, 0.04);
+      border-color: rgba(0, 0, 0, 0.25);
     }
 
-    /* Sliding knob */
     .toggle-knob {
       position: relative;
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       border-radius: 9999px;
       flex-shrink: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #1a1a1a;
-      border: 1px solid rgba(255,255,255,0.12);
-      box-shadow:
-        0 2px 8px rgba(0,0,0,0.6),
-        0 0 1px rgba(255,255,255,0.08) inset;
-      /* knob starts at left (dark = moon side) */
+      background: #1c1c21;
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
       transform: translateX(0);
       transition:
         transform 0.5s cubic-bezier(0.34, 1.4, 0.64, 1),
         background 0.4s ease,
-        border-color 0.4s ease,
-        box-shadow 0.4s ease;
+        border-color 0.4s ease;
     }
     body.light-mode .toggle-knob {
       background: #ffffff;
       border-color: rgba(0,0,0,0.1);
-      box-shadow:
-        0 2px 8px rgba(0,0,0,0.12),
-        0 0 1px rgba(0,0,0,0.05) inset;
-      /* knob slides to right (light = sun side) */
-      transform: translateX(68px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.14);
+      transform: translateX(64px);
     }
 
-    /* Track labels (moon left, sun right) */
     .toggle-track-labels {
       position: absolute;
       inset: 0;
@@ -499,20 +659,16 @@
       height: 20px;
       transition: opacity 0.35s ease;
     }
-    /* Dark mode: moon on left is hidden by knob, sun on right glows faintly */
     .toggle-track-moon { opacity: 0.18; }
     .toggle-track-sun  { opacity: 0.5; }
-    /* Light mode: sun on right is hidden by knob, moon on left glows faintly */
     body.light-mode .toggle-track-moon { opacity: 0.45; }
     body.light-mode .toggle-track-sun  { opacity: 0.15; }
 
-    /* Icon inside knob */
     .toggle-knob-icon {
       width: 18px;
       height: 18px;
       position: relative;
     }
-    /* Moon icon inside knob */
     .knob-moon {
       position: absolute;
       inset: 0;
@@ -542,20 +698,20 @@
       transform: scale(1) rotate(0deg);
     }
 
-         /* --- Über Mich Sektion (Dark & Light optimiert) --- */
+    /* ── Über Mich Sektion ── */
     .about-section {
       width: 100%;
-      max-width: 1400px;
+      max-width: 1500px;
       margin: 0 auto;
-      padding: 0 1.5rem 6rem;
+      padding: 2rem 1.5rem 6.5rem;
       transition: color 0.3s ease, border-color 0.3s ease;
     }
     
     .about-divider {
       width: 100%;
       height: 1px;
-      background-color: rgba(255, 255, 255, 0.12);
-      margin-bottom: 4rem;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.14), transparent);
+      margin-bottom: 4.5rem;
     }
     
     .about-container {
@@ -567,12 +723,11 @@
     
     @media (min-width: 900px) {
       .about-container {
-        grid-template-columns: 1.1fr 0.9fr;
-        gap: 4rem;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 4.5rem;
       }
     }
     
-    /* Video Frame */
     .about-video-wrapper {
       width: 100%;
     }
@@ -581,10 +736,15 @@
       position: relative;
       width: 100%;
       padding-bottom: 56.25%;
-      background-color: #000;
-      border-radius: 6px;
+      background-color: #08080a;
+      border-radius: 14px;
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8);
+      transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+    }
+    .about-video-frame:hover {
+      border-color: rgba(255, 255, 255, 0.25);
     }
     
     .about-video-frame iframe {
@@ -596,33 +756,32 @@
       border: 0;
     }
     
-    /* Typografie: Dark Mode (Default) */
     .about-subtitle {
       display: block;
-      font-size: 0.75rem;
-      letter-spacing: 0.25em;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
       color: #888888;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.6rem;
     }
     
     .about-title {
-      font-size: 1.75rem;
-      font-weight: 300;
-      letter-spacing: 0.15em;
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
       color: #f5f5f5;
-      margin: 0 0 1.5rem 0;
+      margin: 0 0 1.25rem 0;
     }
     
     .about-bio {
       font-size: 0.95rem;
-      line-height: 1.75;
-      color: #aaaaaa;
+      line-height: 1.8;
+      color: #a1a1aa;
       margin-bottom: 2.5rem;
       font-weight: 300;
     }
     
-    /* Steckbrief Liste: Dark Mode (Default) */
     .about-details {
       list-style: none;
       padding: 0;
@@ -636,21 +795,21 @@
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 0.8rem;
       font-size: 0.85rem;
     }
     
     .detail-label {
       text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: #777777;
-      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      color: #71717a;
+      font-size: 0.72rem;
       font-weight: 500;
     }
     
     .detail-value {
-      color: #e5e5e5;
+      color: #f4f4f5;
       font-weight: 300;
       text-align: right;
     }
@@ -658,120 +817,105 @@
     .detail-link {
       color: inherit;
       text-decoration: underline;
-      text-underline-offset: 4px;
-      transition: opacity 0.2s ease;
+      text-underline-offset: 5px;
+      text-decoration-color: rgba(255,255,255,0.3);
+      transition: opacity 0.2s ease, text-decoration-color 0.2s ease;
     }
     
     .detail-link:hover {
-      opacity: 0.6;
+      opacity: 0.75;
+      text-decoration-color: #ffffff;
     }
     
-    /* =========================================
-       LIGHT MODE OVERRIDES
-       Greift bei .light, .light-mode oder [data-theme="light"]
-       ========================================= */
-    body.light-mode .about-divider,
-    html.light .about-divider,
-    [data-theme="light"] .about-divider {
-      background-color: rgba(0, 0, 0, 0.1);
+    /* Light Mode Overrides for About */
+    body.light-mode .about-divider {
+      background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.12), transparent);
     }
-    
-    body.light-mode .about-video-frame,
-    html.light .about-video-frame,
-    [data-theme="light"] .about-video-frame {
+    body.light-mode .about-video-frame {
       border-color: rgba(0, 0, 0, 0.12);
+      box-shadow: 0 25px 50px -15px rgba(0, 0, 0, 0.12);
     }
-    
-    body.light-mode .about-subtitle,
-    html.light .about-subtitle,
-    [data-theme="light"] .about-subtitle {
-      color: #666666;
-    }
-    
-    body.light-mode .about-title,
-    html.light .about-title,
-    [data-theme="light"] .about-title {
-      color: #000000;
-    }
-    
-    body.light-mode .about-bio,
-    html.light .about-bio,
-    [data-theme="light"] .about-bio {
-      color: #333333;
-    }
-    
-    body.light-mode .about-details li,
-    html.light .about-details li,
-    [data-theme="light"] .about-details li {
-      border-bottom-color: rgba(0, 0, 0, 0.1);
-    }
-    
-    body.light-mode .detail-label,
-    html.light .detail-label,
-    [data-theme="light"] .detail-label {
-      color: #666666;
-    }
-    
-    body.light-mode .detail-value,
-    html.light .detail-value,
-    [data-theme="light"] .detail-value {
-      color: #000000;
-      font-weight: 400;
-    }
+    body.light-mode .about-subtitle { color: #71717a; }
+    body.light-mode .about-title { color: #09090b; }
+    body.light-mode .about-bio { color: #3f3f46; }
+    body.light-mode .about-details li { border-bottom-color: rgba(0, 0, 0, 0.08); }
+    body.light-mode .detail-label { color: #71717a; }
+    body.light-mode .detail-value { color: #09090b; font-weight: 400; }
+    body.light-mode .detail-link { text-decoration-color: rgba(0,0,0,0.3); }
+    body.light-mode .detail-link:hover { text-decoration-color: #000000; }
   </style>
 </head>
 
-<body class="bg-[#000000] text-neutral-100 font-sans min-h-screen flex flex-col selection:bg-white/20 selection:text-white antialiased">
+<body class="bg-[#050505] text-neutral-100 font-sans min-h-screen flex flex-col selection:bg-white/20 selection:text-white antialiased relative">
+
+  <!-- Analog Film Grain & Ambient Light -->
+  <div class="film-grain" aria-hidden="true"></div>
+  <div class="ambient-spotlight" aria-hidden="true"></div>
+
+  <!-- Custom Magnetic Viewfinder Cursor -->
+  <div id="custom-cursor" aria-hidden="true"></div>
 
   <!-- Header Section -->
-  <header class="sticky top-0 z-40 w-full backdrop-blur-md bg-[#000000]/90 border-b border-white/[0.08] transition-all duration-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col items-center justify-center text-center">
+  <header class="sticky top-0 z-40 w-full backdrop-blur-xl bg-[#050505]/85 border-b border-white/[0.07] transition-all duration-300">
+    <div id="scroll-progress"></div>
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-8 py-4 sm:py-5 flex flex-col md:flex-row items-center justify-between gap-4">
       
       <!-- Brand Logo / Name: Clickable to go back to Home -->
-      <a href="#" id="brand-home-link" class="inline-block group cursor-pointer focus:outline-none" title="Zurück zur Startseite">
-        <h1 class="text-xs sm:text-sm tracking-[0.35em] text-zinc-400 group-hover:text-white transition-colors duration-200 uppercase font-light mb-1">
+      <a href="#" id="brand-home-link" class="inline-flex flex-col items-center md:items-start group cursor-pointer focus:outline-none" title="Zurück zur Startseite">
+        <h1 class="text-[10px] sm:text-xs tracking-[0.4em] text-zinc-400 group-hover:text-white transition-colors duration-200 uppercase font-light">
           Leo Stäger
         </h1>
-        <p class="text-xl sm:text-2xl md:text-3xl font-serif tracking-[0.2em] font-normal text-white uppercase group-hover:opacity-90 transition-opacity duration-200">
+        <p class="text-lg sm:text-xl font-serif tracking-[0.22em] font-normal text-white uppercase group-hover:opacity-90 transition-opacity duration-200">
           Photography
         </p>
       </a>
 
-      <!-- Filter Buttons (Home button removed) -->
-      <nav class="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3" aria-label="Portfolio Filter">
+      <!-- Filter Buttons & Language Toggle -->
+      <nav class="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2.5" aria-label="Portfolio Filter">
+        <button type="button" 
+                data-filter="home" 
+                class="filter-btn home-pill-btn group/home inline-flex items-center gap-2 px-4 py-1.5 sm:px-4.5 sm:py-1.5 text-[11px] font-medium uppercase tracking-[0.22em] rounded-full transition-all duration-300 border border-white/20 text-zinc-200 hover:text-white hover:border-white/40 hover:scale-[1.03]">
+          <svg class="w-3.5 h-3.5 transition-transform duration-300 group-hover/home:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 10.5L12 3l9 7.5M5.25 9.75V19.5a1.5 1.5 0 001.5 1.5h3.75v-5.25a1.5 1.5 0 011.5-1.5h0a1.5 1.5 0 011.5 1.5V21h3.75a1.5 1.5 0 001.5-1.5V9.75" />
+          </svg>
+          <span class="filter-label">Home</span>
+        </button>
+
+        <span class="hidden sm:inline-block w-px h-4 bg-white/15 my-auto mx-0.5 lang-separator" aria-hidden="true"></span>
+
         <button type="button" 
                 data-filter="animals" 
-                class="filter-btn px-4 py-1.5 sm:px-5 sm:py-2 text-xs uppercase tracking-widest rounded-full transition-all duration-200 border border-white/10 text-zinc-400 hover:text-white hover:border-white/25 hover:bg-white/[0.04]">
+                class="filter-btn px-3.5 py-1.5 sm:px-4 sm:py-1.5 text-[11px] uppercase tracking-[0.2em] rounded-full transition-all duration-300 border border-white/10 text-zinc-400 hover:text-white hover:border-white/30 hover:bg-white/[0.05]">
           Tiere
         </button>
         <button type="button" 
                 data-filter="aviation" 
-                class="filter-btn px-4 py-1.5 sm:px-5 sm:py-2 text-xs uppercase tracking-widest rounded-full transition-all duration-200 border border-white/10 text-zinc-400 hover:text-white hover:border-white/25 hover:bg-white/[0.04]">
+                class="filter-btn px-3.5 py-1.5 sm:px-4 sm:py-1.5 text-[11px] uppercase tracking-[0.2em] rounded-full transition-all duration-300 border border-white/10 text-zinc-400 hover:text-white hover:border-white/30 hover:bg-white/[0.05]">
           Aviatik
         </button>
         <button type="button" 
                 data-filter="environments" 
-                class="filter-btn px-4 py-1.5 sm:px-5 sm:py-2 text-xs uppercase tracking-widest rounded-full transition-all duration-200 border border-white/10 text-zinc-400 hover:text-white hover:border-white/25 hover:bg-white/[0.04]">
+                class="filter-btn px-3.5 py-1.5 sm:px-4 sm:py-1.5 text-[11px] uppercase tracking-[0.2em] rounded-full transition-all duration-300 border border-white/10 text-zinc-400 hover:text-white hover:border-white/30 hover:bg-white/[0.05]">
           Umgebungen
         </button>
         <button type="button" 
                 data-filter="food" 
-                class="filter-btn px-4 py-1.5 sm:px-5 sm:py-2 text-xs uppercase tracking-widest rounded-full transition-all duration-200 border border-white/10 text-zinc-400 hover:text-white hover:border-white/25 hover:bg-white/[0.04]">
+                class="filter-btn px-3.5 py-1.5 sm:px-4 sm:py-1.5 text-[11px] uppercase tracking-[0.2em] rounded-full transition-all duration-300 border border-white/10 text-zinc-400 hover:text-white hover:border-white/30 hover:bg-white/[0.05]">
           Essen
         </button>
         <button type="button" 
                 data-filter="design" 
-                class="filter-btn px-4 py-1.5 sm:px-5 sm:py-2 text-xs uppercase tracking-widest rounded-full transition-all duration-200 border border-white/10 text-zinc-400 hover:text-white hover:border-white/25 hover:bg-white/[0.04]">
+                class="filter-btn px-3.5 py-1.5 sm:px-4 sm:py-1.5 text-[11px] uppercase tracking-[0.2em] rounded-full transition-all duration-300 border border-white/10 text-zinc-400 hover:text-white hover:border-white/30 hover:bg-white/[0.05]">
           Gestaltung
         </button>
 
         <!-- Divider -->
-        <span class="hidden sm:inline-block w-px h-4 bg-white/15 my-auto mx-0.5 lang-separator" aria-hidden="true"></span>
+        <span class="hidden sm:inline-block w-px h-4 bg-white/15 my-auto mx-1 lang-separator" aria-hidden="true"></span>
 
         <!-- Language Switcher Button -->
         <button type="button" 
                 id="lang-toggle-btn" 
-                class="lang-toggle-btn px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs uppercase tracking-widest rounded-full transition-all duration-200 border border-white/10 text-zinc-400 hover:text-white hover:border-white/25 hover:bg-white/[0.04] inline-flex items-center gap-1.5 cursor-pointer" 
+                class="lang-toggle-btn px-3 py-1.5 text-[11px] uppercase tracking-widest rounded-full transition-all duration-200 border border-white/10 text-zinc-400 hover:text-white hover:border-white/30 hover:bg-white/[0.05] inline-flex items-center gap-1.5 cursor-pointer" 
                 aria-label="Sprache zu Englisch wechseln" 
                 title="Sprache wechseln (DE / EN)">
           <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -785,661 +929,685 @@
     </div>
   </header>
 
+  <!-- Editorial Hero Banner (Only visible on Home) -->
+  <section id="hero-intro" class="relative z-10 max-w-[1600px] w-full mx-auto px-4 sm:px-8 pt-10 sm:pt-14 pb-2 transition-all duration-500">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/[0.07] pb-8">
+      <div>
+        <h2 id="hero-title" class="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-white leading-[1.15]">
+          Momente zwischen <span class="italic font-light text-zinc-300">Licht</span> &amp; <span class="italic font-light text-zinc-300">Präzision</span>.
+        </h2>
+      </div>
+      <p id="hero-subtitle" class="text-xs sm:text-sm text-zinc-400 max-w-md font-light leading-relaxed">
+        Ausgewählte Arbeiten aus Wildlife, Luftfahrt, Landschaft, Kulinarik und visueller Gestaltung. Wähle eine Kollektion für die Vollbild-Ansicht.
+      </p>
+    </div>
+  </section>
+
   <!-- Gallery Content Container -->
-  <main class="flex-grow max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+  <main class="relative z-10 flex-grow max-w-[1600px] w-full mx-auto px-4 sm:px-8 py-8 sm:py-10">
     
     <!-- Item Counter & Active Filter Indication -->
-    <div class="flex justify-between items-center text-xs tracking-wider uppercase text-zinc-500 mb-6 px-1">
-      <span id="active-category-label">Home — Übersicht</span>
+    <div class="flex justify-between items-center text-[11px] font-mono tracking-[0.2em] uppercase text-zinc-500 mb-6 px-0.5">
+      <div class="flex items-center gap-3">
+        <button id="back-to-home-pill" type="button" class="hidden items-center gap-1.5 text-zinc-300 hover:text-white transition-colors cursor-pointer">
+          <span>&larr;</span>
+          <span id="back-to-home-text">Übersicht</span>
+        </button>
+        <span id="active-category-label">Home — Übersicht</span>
+      </div>
       <span id="item-counter">5 Kategorien</span>
     </div>
 
-    <!-- Responsive Photo Grid (Left-aligned, Switchable between Home & Category layouts) -->
+    <!-- Responsive Photo Grid -->
     <div id="gallery" class="portfolio-grid home-grid">
 
       <!-- ================= ANIMALS ================= -->
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="animals"
                data-shutter="1/800s" data-aperture="ƒ/5.6" data-focal="181mm" data-iso="ISO 100" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/animals/Gro%C3%9F%20(DSC02057).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/animals/Gro%C3%9F%20(DSC02057).jpeg" 
                alt="Animals - DSC02057" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Tiere</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/800s</span><span>·</span><span>ƒ/5.6</span><span>·</span><span>ISO 100</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Tiere</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/800s</span><span class="text-zinc-500">·</span><span>ƒ/5.6</span><span class="text-zinc-500">·</span><span>ISO 100</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="animals"
                data-shutter="1/320s" data-aperture="ƒ/6.3" data-focal="300mm" data-iso="ISO 100" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/animals/Gro%C3%9F%20(DSC02284).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/animals/Gro%C3%9F%20(DSC02284).jpeg" 
                alt="Animals - DSC02284" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Tiere</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/320s</span><span>·</span><span>ƒ/6.3</span><span>·</span><span>ISO 100</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Tiere</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/320s</span><span class="text-zinc-500">·</span><span>ƒ/6.3</span><span class="text-zinc-500">·</span><span>ISO 100</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="animals"
                data-shutter="1/500s" data-aperture="ƒ/6.3" data-focal="300mm" data-iso="ISO 800" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/animals/Gro%C3%9F%20(DSC02441).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/animals/Gro%C3%9F%20(DSC02441).jpeg" 
                alt="Animals - DSC02441" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Tiere</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/500s</span><span>·</span><span>ƒ/6.3</span><span>·</span><span>ISO 800</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Tiere</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/500s</span><span class="text-zinc-500">·</span><span>ƒ/6.3</span><span class="text-zinc-500">·</span><span>ISO 800</span>
           </div>
         </div>
       </article>
 
       <!-- Cover Animals (DSC02573) -->
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="animals"
                data-is-cover="true"
                data-shutter="1/400s" data-aperture="ƒ/6.3" data-focal="189mm" data-iso="ISO 1600" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/animals/Gro%C3%9F%20(DSC02573).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/animals/Gro%C3%9F%20(DSC02573).jpeg" 
                alt="Animals - DSC02573" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <!-- Centered Home Title Overlay (Balken-Fix durch optimierten Verlauf) -->
-        <div class="home-title-overlay absolute inset-x-0 bottom-0 pb-6 pt-16 px-4 flex flex-col items-center justify-end text-center pointer-events-none transition-opacity duration-300">
-          <span class="text-sm sm:text-base tracking-[0.3em] uppercase text-white font-serif font-medium drop-shadow-md">Tiere</span>
-          <span class="cover-open-gallery text-[9px] tracking-[0.25em] uppercase text-zinc-400 mt-1 opacity-80 group-hover:text-zinc-200">Galerie öffnen &rarr;</span>
+        <!-- Home Title Overlay -->
+        <div class="home-title-overlay absolute inset-x-0 bottom-0 pb-6 pt-20 px-4 flex flex-col items-center justify-end text-center pointer-events-none transition-opacity duration-300">
+          <span class="text-[10px] font-mono tracking-[0.3em] text-zinc-400 mb-1">01</span>
+          <span class="text-base sm:text-lg tracking-[0.28em] uppercase text-white font-serif font-medium drop-shadow-md">Tiere</span>
+          <span class="cover-open-gallery text-[9px] font-mono tracking-[0.22em] uppercase text-zinc-300 mt-1.5 opacity-80 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all">Galerie öffnen &rarr;</span>
         </div>
-        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Tiere</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/400s</span><span>·</span><span>ƒ/6.3</span><span>·</span><span>ISO 1600</span>
+        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Tiere</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/400s</span><span class="text-zinc-500">·</span><span>ƒ/6.3</span><span class="text-zinc-500">·</span><span>ISO 1600</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="animals"
                data-shutter="1/800s" data-aperture="ƒ/6.3" data-focal="300mm" data-iso="ISO 800" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/animals/Gro%C3%9F%20(DSC02653).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/animals/Gro%C3%9F%20(DSC02653).jpeg" 
                alt="Animals - DSC02653" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Tiere</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/800s</span><span>·</span><span>ƒ/6.3</span><span>·</span><span>ISO 800</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Tiere</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/800s</span><span class="text-zinc-500">·</span><span>ƒ/6.3</span><span class="text-zinc-500">·</span><span>ISO 800</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="animals"
                data-shutter="1/1000s" data-aperture="ƒ/6.3" data-focal="300mm" data-iso="ISO 640" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/animals/Gro%C3%9F%20(DSC03043).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/animals/Gro%C3%9F%20(DSC03043).jpeg" 
                alt="Animals - DSC03043" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Tiere</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/1000s</span><span>·</span><span>ƒ/6.3</span><span>·</span><span>ISO 640</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Tiere</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/1000s</span><span class="text-zinc-500">·</span><span>ƒ/6.3</span><span class="text-zinc-500">·</span><span>ISO 640</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="animals"
                data-shutter="1/1000s" data-aperture="ƒ/6.3" data-focal="300mm" data-iso="ISO 400" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/animals/Gro%C3%9F%20(DSC03157).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/animals/Gro%C3%9F%20(DSC03157).jpeg" 
                alt="Animals - DSC03157" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Tiere</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/1000s</span><span>·</span><span>ƒ/6.3</span><span>·</span><span>ISO 400</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Tiere</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/1000s</span><span class="text-zinc-500">·</span><span>ƒ/6.3</span><span class="text-zinc-500">·</span><span>ISO 400</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="animals"
                data-shutter="1/1600s" data-aperture="ƒ/6.3" data-focal="300mm" data-iso="ISO 12800" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/animals/Gro%C3%9F%20(unbenannt-21).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/animals/Gro%C3%9F%20(unbenannt-21).jpeg" 
                alt="Animals - unbenannt-21" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Tiere</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/1600s</span><span>·</span><span>ƒ/6.3</span><span>·</span><span>ISO 12800</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Tiere</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/1600s</span><span class="text-zinc-500">·</span><span>ƒ/6.3</span><span class="text-zinc-500">·</span><span>ISO 12800</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="animals"
                data-shutter="1/250s" data-aperture="ƒ/5.6" data-focal="70mm" data-iso="ISO 100" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/animals/Gro%C3%9F%20(unbenannt-62-2).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/animals/Gro%C3%9F%20(unbenannt-62-2).jpeg" 
                alt="Animals - unbenannt-62-2" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Tiere</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/250s</span><span>·</span><span>ƒ/5.6</span><span>·</span><span>ISO 100</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Tiere</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/250s</span><span class="text-zinc-500">·</span><span>ƒ/5.6</span><span class="text-zinc-500">·</span><span>ISO 100</span>
           </div>
         </div>
       </article>
 
       <!-- ================= AVIATION ================= -->
       <!-- Cover Aviation (Home Cover) -->
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="aviation"
                data-is-cover="true"
                data-shutter="1/2500s" data-aperture="ƒ/6.3" data-focal="300mm" data-iso="ISO 250" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(unbenannt-1626).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(unbenannt-1626).jpeg" 
                alt="Aviation - unbenannt-1626" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <!-- Centered Home Title Overlay -->
-        <div class="home-title-overlay absolute inset-x-0 bottom-0 pb-6 pt-16 px-4 flex flex-col items-center justify-end text-center pointer-events-none transition-opacity duration-300">
-          <span class="text-sm sm:text-base tracking-[0.3em] uppercase text-white font-serif font-medium drop-shadow-md">Aviatik</span>
-          <span class="cover-open-gallery text-[9px] tracking-[0.25em] uppercase text-zinc-400 mt-1 opacity-80 group-hover:text-zinc-200">Galerie öffnen &rarr;</span>
+        <!-- Home Title Overlay -->
+        <div class="home-title-overlay absolute inset-x-0 bottom-0 pb-6 pt-20 px-4 flex flex-col items-center justify-end text-center pointer-events-none transition-opacity duration-300">
+          <span class="text-[10px] font-mono tracking-[0.3em] text-zinc-400 mb-1">02</span>
+          <span class="text-base sm:text-lg tracking-[0.28em] uppercase text-white font-serif font-medium drop-shadow-md">Aviatik</span>
+          <span class="cover-open-gallery text-[9px] font-mono tracking-[0.22em] uppercase text-zinc-300 mt-1.5 opacity-80 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all">Galerie öffnen &rarr;</span>
         </div>
-        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Aviatik</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/2500s</span><span>·</span><span>ƒ/6.3</span><span>·</span><span>ISO 250</span>
+        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Aviatik</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/2500s</span><span class="text-zinc-500">·</span><span>ƒ/6.3</span><span class="text-zinc-500">·</span><span>ISO 250</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="aviation"
                data-shutter="—" data-aperture="—" data-focal="—" data-iso="—" data-camera="Aviation Archive"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(F35--2).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(F35--2).jpeg" 
                alt="Aviation - F35--2" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Aviatik</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-400 tracking-wide mt-1 flex items-center space-x-2">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Aviatik</span>
+          <div class="font-mono text-xs text-zinc-400 tracking-wide mt-1.5 flex items-center space-x-2">
             <span class="meta-unavailable">Keine Metadaten verfügbar</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="aviation"
                data-shutter="—" data-aperture="—" data-focal="—" data-iso="—" data-camera="Aviation Archive"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(F35--4).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(F35--4).jpeg" 
                alt="Aviation - F35--4" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Aviatik</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-400 tracking-wide mt-1 flex items-center space-x-2">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Aviatik</span>
+          <div class="font-mono text-xs text-zinc-400 tracking-wide mt-1.5 flex items-center space-x-2">
             <span class="meta-unavailable">Keine Metadaten verfügbar</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="aviation"
                data-shutter="1/3200s" data-aperture="ƒ/6.3" data-focal="300mm" data-iso="ISO 640" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(unbenannt-1990).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(unbenannt-1990).jpeg" 
                alt="Aviation - unbenannt-1990" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Aviatik</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/3200s</span><span>·</span><span>ƒ/6.3</span><span>·</span><span>ISO 640</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Aviatik</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/3200s</span><span class="text-zinc-500">·</span><span>ƒ/6.3</span><span class="text-zinc-500">·</span><span>ISO 640</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="aviation"
                data-shutter="1/2500s" data-aperture="ƒ/6.3" data-focal="76mm" data-iso="ISO 400" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(unbenannt-224).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(unbenannt-224).jpeg" 
                alt="Aviation - unbenannt-224" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Aviatik</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/2500s</span><span>·</span><span>ƒ/6.3</span><span>·</span><span>ISO 400</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Aviatik</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/2500s</span><span class="text-zinc-500">·</span><span>ƒ/6.3</span><span class="text-zinc-500">·</span><span>ISO 400</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="aviation"
                data-shutter="1/3200s" data-aperture="ƒ/6.3" data-focal="300mm" data-iso="ISO 400" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(unbenannt-2306).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(unbenannt-2306).jpeg" 
                alt="Aviation - unbenannt-2306" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Aviatik</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/3200s</span><span>·</span><span>ƒ/6.3</span><span>·</span><span>ISO 400</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Aviatik</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/3200s</span><span class="text-zinc-500">·</span><span>ƒ/6.3</span><span class="text-zinc-500">·</span><span>ISO 400</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="aviation"
                data-shutter="1/100s" data-aperture="ƒ/18" data-focal="300mm" data-iso="ISO 100" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(unbenannt-2363).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(unbenannt-2363).jpeg" 
                alt="Aviation - unbenannt-2363" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Aviatik</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/100s</span><span>·</span><span>ƒ/18</span><span>·</span><span>ISO 100</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Aviatik</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/100s</span><span class="text-zinc-500">·</span><span>ƒ/18</span><span class="text-zinc-500">·</span><span>ISO 100</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="aviation"
                data-shutter="1/3200s" data-aperture="ƒ/6.3" data-focal="300mm" data-iso="ISO 640" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(unbenannt-374).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(unbenannt-374).jpeg" 
                alt="Aviation - unbenannt-374" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Aviatik</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/3200s</span><span>·</span><span>ƒ/6.3</span><span>·</span><span>ISO 640</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Aviatik</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/3200s</span><span class="text-zinc-500">·</span><span>ƒ/6.3</span><span class="text-zinc-500">·</span><span>ISO 640</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="aviation"
                data-shutter="1/2500s" data-aperture="ƒ/6.3" data-focal="300mm" data-iso="ISO 1000" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(unbenannt-578).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(unbenannt-578).jpeg" 
                alt="Aviation - unbenannt-578" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Aviatik</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/2500s</span><span>·</span><span>ƒ/6.3</span><span>·</span><span>ISO 1000</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Aviatik</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/2500s</span><span class="text-zinc-500">·</span><span>ƒ/6.3</span><span class="text-zinc-500">·</span><span>ISO 1000</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="aviation"
                data-shutter="1/2500s" data-aperture="ƒ/4.5" data-focal="70mm" data-iso="ISO 250" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(unbenannt-996).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/aviation/Gro%C3%9F%20(unbenannt-996).jpeg" 
                alt="Aviation - unbenannt-996" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Aviatik</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/2500s</span><span>·</span><span>ƒ/4.5</span><span>·</span><span>ISO 250</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Aviatik</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/2500s</span><span class="text-zinc-500">·</span><span>ƒ/4.5</span><span class="text-zinc-500">·</span><span>ISO 250</span>
           </div>
         </div>
       </article>
 
       <!-- ================= ENVIRONMENTS ================= -->
       <!-- Cover Environments (Home Cover) -->
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="environments"
                data-is-cover="true"
                data-shutter="1/3200s" data-aperture="ƒ/4.5" data-focal="70mm" data-iso="ISO 100" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(DSC01975).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(DSC01975).jpeg" 
                alt="Environments - DSC01975" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <!-- Centered Home Title Overlay -->
-        <div class="home-title-overlay absolute inset-x-0 bottom-0 pb-6 pt-16 px-4 flex flex-col items-center justify-end text-center pointer-events-none transition-opacity duration-300">
-          <span class="text-sm sm:text-base tracking-[0.3em] uppercase text-white font-serif font-medium drop-shadow-md">Umgebungen</span>
-          <span class="cover-open-gallery text-[9px] tracking-[0.25em] uppercase text-zinc-400 mt-1 opacity-80 group-hover:text-zinc-200">Galerie öffnen &rarr;</span>
+        <!-- Home Title Overlay -->
+        <div class="home-title-overlay absolute inset-x-0 bottom-0 pb-6 pt-20 px-4 flex flex-col items-center justify-end text-center pointer-events-none transition-opacity duration-300">
+          <span class="text-[10px] font-mono tracking-[0.3em] text-zinc-400 mb-1">03</span>
+          <span class="text-base sm:text-lg tracking-[0.28em] uppercase text-white font-serif font-medium drop-shadow-md">Umgebungen</span>
+          <span class="cover-open-gallery text-[9px] font-mono tracking-[0.22em] uppercase text-zinc-300 mt-1.5 opacity-80 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all">Galerie öffnen &rarr;</span>
         </div>
-        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Umgebungen</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/3200s</span><span>·</span><span>ƒ/4.5</span><span>·</span><span>ISO 100</span>
+        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Umgebungen</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/3200s</span><span class="text-zinc-500">·</span><span>ƒ/4.5</span><span class="text-zinc-500">·</span><span>ISO 100</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="environments"
                data-shutter="1/3200s" data-aperture="ƒ/6.3" data-focal="300mm" data-iso="ISO 100" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(DSC03346).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(DSC03346).jpeg" 
                alt="Environments - DSC03346" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Umgebungen</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/3200s</span><span>·</span><span>ƒ/6.3</span><span>·</span><span>ISO 100</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Umgebungen</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/3200s</span><span class="text-zinc-500">·</span><span>ƒ/6.3</span><span class="text-zinc-500">·</span><span>ISO 100</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="environments"
                data-shutter="—" data-aperture="—" data-focal="—" data-iso="—" data-camera="Archive"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(IMG-20261021-WA0001(2)).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(IMG-20261021-WA0001(2)).jpeg" 
                alt="Environments - IMG-20261021" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Umgebungen</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-400 tracking-wide mt-1 flex items-center space-x-2">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Umgebungen</span>
+          <div class="font-mono text-xs text-zinc-400 tracking-wide mt-1.5 flex items-center space-x-2">
             <span class="meta-unavailable">Keine Metadaten verfügbar</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="environments"
                data-shutter="1/1600s" data-aperture="ƒ/4.5" data-focal="70mm" data-iso="ISO 320" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(unbenannt-216).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(unbenannt-216).jpeg" 
                alt="Environments - unbenannt-216" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Umgebungen</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/1600s</span><span>·</span><span>ƒ/4.5</span><span>·</span><span>ISO 320</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Umgebungen</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/1600s</span><span class="text-zinc-500">·</span><span>ƒ/4.5</span><span class="text-zinc-500">·</span><span>ISO 320</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="environments"
                data-shutter="1/1600s" data-aperture="ƒ/4.5" data-focal="70mm" data-iso="ISO 250" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(unbenannt-261).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(unbenannt-261).jpeg" 
                alt="Environments - unbenannt-261" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Umgebungen</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/1600s</span><span>·</span><span>ƒ/4.5</span><span>·</span><span>ISO 250</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Umgebungen</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/1600s</span><span class="text-zinc-500">·</span><span>ƒ/4.5</span><span class="text-zinc-500">·</span><span>ISO 250</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="environments"
                data-shutter="1/1600s" data-aperture="ƒ/4.5" data-focal="70mm" data-iso="ISO 1600" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(unbenannt-265).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(unbenannt-265).jpeg" 
                alt="Environments - unbenannt-265" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Umgebungen</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/1600s</span><span>·</span><span>ƒ/4.5</span><span>·</span><span>ISO 1600</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Umgebungen</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/1600s</span><span class="text-zinc-500">·</span><span>ƒ/4.5</span><span class="text-zinc-500">·</span><span>ISO 1600</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="environments"
                data-shutter="1/100s" data-aperture="ƒ/4.5" data-focal="80mm" data-iso="ISO 12800" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(unbenannt-335).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(unbenannt-335).jpeg" 
                alt="Environments - unbenannt-335" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Umgebungen</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/100s</span><span>·</span><span>ƒ/4.5</span><span>·</span><span>ISO 12800</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Umgebungen</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/100s</span><span class="text-zinc-500">·</span><span>ƒ/4.5</span><span class="text-zinc-500">·</span><span>ISO 12800</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="environments"
                data-shutter="1/2000s" data-aperture="ƒ/4.5" data-focal="96mm" data-iso="ISO 400" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(unbenannt-416).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(unbenannt-416).jpeg" 
                alt="Environments - unbenannt-416" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Umgebungen</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/2000s</span><span>·</span><span>ƒ/4.5</span><span>·</span><span>ISO 400</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Umgebungen</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/2000s</span><span class="text-zinc-500">·</span><span>ƒ/4.5</span><span class="text-zinc-500">·</span><span>ISO 400</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="environments"
                data-shutter="1/2000s" data-aperture="ƒ/4.5" data-focal="70mm" data-iso="ISO 100" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(unbenannt-421).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(unbenannt-421).jpeg" 
                alt="Environments - unbenannt-421" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Umgebungen</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/2000s</span><span>·</span><span>ƒ/4.5</span><span>·</span><span>ISO 100</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Umgebungen</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/2000s</span><span class="text-zinc-500">·</span><span>ƒ/4.5</span><span class="text-zinc-500">·</span><span>ISO 100</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="environments"
                data-shutter="1/2000s" data-aperture="ƒ/4.5" data-focal="70mm" data-iso="ISO 200" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(unbenannt-457).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/environments/Gro%C3%9F%20(unbenannt-457).jpeg" 
                alt="Environments - unbenannt-457" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Umgebungen</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/2000s</span><span>·</span><span>ƒ/4.5</span><span>·</span><span>ISO 200</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Umgebungen</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/2000s</span><span class="text-zinc-500">·</span><span>ƒ/4.5</span><span class="text-zinc-500">·</span><span>ISO 200</span>
           </div>
         </div>
       </article>
 
       <!-- ================= FOOD ================= -->
       <!-- Cover Food (Home Cover) -->
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="food"
                data-is-cover="true"
                data-shutter="1/250s" data-aperture="ƒ/4.0" data-focal="33mm" data-iso="ISO 3200" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC09835-Enhanced-NR).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC09835-Enhanced-NR).jpeg" 
                alt="Food - DSC09835" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <!-- Centered Home Title Overlay -->
-        <div class="home-title-overlay absolute inset-x-0 bottom-0 pb-6 pt-16 px-4 flex flex-col items-center justify-end text-center pointer-events-none transition-opacity duration-300">
-          <span class="text-sm sm:text-base tracking-[0.3em] uppercase text-white font-serif font-medium drop-shadow-md">Essen</span>
-          <span class="cover-open-gallery text-[9px] tracking-[0.25em] uppercase text-zinc-400 mt-1 opacity-80 group-hover:text-zinc-200">Galerie öffnen &rarr;</span>
+        <!-- Home Title Overlay -->
+        <div class="home-title-overlay absolute inset-x-0 bottom-0 pb-6 pt-20 px-4 flex flex-col items-center justify-end text-center pointer-events-none transition-opacity duration-300">
+          <span class="text-[10px] font-mono tracking-[0.3em] text-zinc-400 mb-1">04</span>
+          <span class="text-base sm:text-lg tracking-[0.28em] uppercase text-white font-serif font-medium drop-shadow-md">Essen</span>
+          <span class="cover-open-gallery text-[9px] font-mono tracking-[0.22em] uppercase text-zinc-300 mt-1.5 opacity-80 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all">Galerie öffnen &rarr;</span>
         </div>
-        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Essen</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/250s</span><span>·</span><span>ƒ/4.0</span><span>·</span><span>ISO 3200</span>
+        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Essen</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/250s</span><span class="text-zinc-500">·</span><span>ƒ/4.0</span><span class="text-zinc-500">·</span><span>ISO 3200</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="food"
                data-shutter="1/100s" data-aperture="ƒ/5.6" data-focal="67mm" data-iso="ISO 800" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC00023-Enhanced-NR).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC00023-Enhanced-NR).jpeg" 
                alt="Food - DSC00023" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Essen</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/100s</span><span>·</span><span>ƒ/5.6</span><span>·</span><span>ISO 800</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Essen</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/100s</span><span class="text-zinc-500">·</span><span>ƒ/5.6</span><span class="text-zinc-500">·</span><span>ISO 800</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="food"
                data-shutter="1/100s" data-aperture="ƒ/4.5" data-focal="50mm" data-iso="ISO 500" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC00061-Enhanced-NR).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC00061-Enhanced-NR).jpeg" 
                alt="Food - DSC00061" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Essen</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/100s</span><span>·</span><span>ƒ/4.5</span><span>·</span><span>ISO 500</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Essen</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/100s</span><span class="text-zinc-500">·</span><span>ƒ/4.5</span><span class="text-zinc-500">·</span><span>ISO 500</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="food"
                data-shutter="1/100s" data-aperture="ƒ/5.6" data-focal="48mm" data-iso="ISO 1250" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC00122-Enhanced-NR).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC00122-Enhanced-NR).jpeg" 
                alt="Food - DSC00122" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Essen</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/100s</span><span>·</span><span>ƒ/5.6</span><span>·</span><span>ISO 1250</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Essen</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/100s</span><span class="text-zinc-500">·</span><span>ƒ/5.6</span><span class="text-zinc-500">·</span><span>ISO 1250</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="food"
                data-shutter="1/50s" data-aperture="ƒ/8.0" data-focal="36mm" data-iso="ISO 1250" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC00150-Enhanced-NR).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC00150-Enhanced-NR).jpeg" 
                alt="Food - DSC00150" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Essen</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/50s</span><span>·</span><span>ƒ/8.0</span><span>·</span><span>ISO 1250</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Essen</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/50s</span><span class="text-zinc-500">·</span><span>ƒ/8.0</span><span class="text-zinc-500">·</span><span>ISO 1250</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="food"
                data-shutter="1/50s" data-aperture="ƒ/4.5" data-focal="51mm" data-iso="ISO 400" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC09860-Enhanced-NR).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC09860-Enhanced-NR).jpeg" 
                alt="Food - DSC09860" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Essen</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/50s</span><span>·</span><span>ƒ/4.5</span><span>·</span><span>ISO 400</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Essen</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/50s</span><span class="text-zinc-500">·</span><span>ƒ/4.5</span><span class="text-zinc-500">·</span><span>ISO 400</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="food"
                data-shutter="1/125s" data-aperture="ƒ/4.5" data-focal="41mm" data-iso="ISO 100" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC09871).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC09871).jpeg" 
                alt="Food - DSC09871" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Essen</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/125s</span><span>·</span><span>ƒ/4.5</span><span>·</span><span>ISO 100</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Essen</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/125s</span><span class="text-zinc-500">·</span><span>ƒ/4.5</span><span class="text-zinc-500">·</span><span>ISO 100</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="food"
                data-shutter="1/1000s" data-aperture="ƒ/4.5" data-focal="41mm" data-iso="Auto" data-camera="SONY ILCE-7M3"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC09993-Enhanced-NR).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC09993-Enhanced-NR).jpeg" 
                alt="Food - DSC09993" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Essen</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/1000s</span><span>·</span><span>ƒ/4.5</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Essen</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/1000s</span><span class="text-zinc-500">·</span><span>ƒ/4.5</span>
           </div>
         </div>
       </article>
 
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="food"
                data-shutter="1/40s" data-aperture="ƒ/14" data-focal="105mm" data-iso="ISO 720" data-camera="NIKON Z 7_2"
                data-src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC_0700).jpeg">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="https://raw.githubusercontent.com/schorschgago/portfolio/main/images/food/Gro%C3%9F%20(DSC_0700).jpeg" 
                alt="Food - DSC_0700" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Essen</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
-            <span>1/40s</span><span>·</span><span>ƒ/14</span><span>·</span><span>ISO 720</span>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Essen</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
+            <span>1/40s</span><span class="text-zinc-500">·</span><span>ƒ/14</span><span class="text-zinc-500">·</span><span>ISO 720</span>
           </div>
         </div>
       </article>
 
       <!-- ================= DESIGN ================= -->
       <!-- Cover Design (Home Cover): Magazin-M273 -->
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="design"
                data-is-cover="true"
                data-camera-pages="true"
@@ -1449,63 +1617,64 @@
                data-src="images/design/magazin-p1.jpg"
                data-pages='["images/design/magazin-p1.jpg","images/design/magazin-p2.jpg","images/design/magazin-p3.jpg","images/design/magazin-p4.jpg","images/design/magazin-p5.jpg"]'
                data-pdf="assets/112025_Magazin-M273_Leo_Staeger.pdf">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="images/design/magazin-p1.jpg" 
                alt="Magazin Design M273" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <!-- Centered Home Title Overlay -->
-        <div class="home-title-overlay absolute inset-x-0 bottom-0 pb-6 pt-16 px-4 flex flex-col items-center justify-end text-center pointer-events-none transition-opacity duration-300">
-          <span class="text-sm sm:text-base tracking-[0.3em] uppercase text-white font-serif font-medium drop-shadow-md">Gestaltung</span>
-          <span class="cover-open-gallery text-[9px] tracking-[0.25em] uppercase text-zinc-400 mt-1 opacity-80 group-hover:text-zinc-200">Galerie öffnen &rarr;</span>
+        <!-- Home Title Overlay -->
+        <div class="home-title-overlay absolute inset-x-0 bottom-0 pb-6 pt-20 px-4 flex flex-col items-center justify-end text-center pointer-events-none transition-opacity duration-300">
+          <span class="text-[10px] font-mono tracking-[0.3em] text-zinc-400 mb-1">05</span>
+          <span class="text-base sm:text-lg tracking-[0.28em] uppercase text-white font-serif font-medium drop-shadow-md">Gestaltung</span>
+          <span class="cover-open-gallery text-[9px] font-mono tracking-[0.22em] uppercase text-zinc-300 mt-1.5 opacity-80 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all">Galerie öffnen &rarr;</span>
         </div>
-        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400" data-pages-count="5">Design · 5 Seiten</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
+        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400" data-pages-count="5">Design · 5 Seiten</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
             <span>Magazin M273</span>
           </div>
         </div>
       </article>
 
       <!-- Flyer M273 -->
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="design"
                data-shutter="—" data-aperture="—" data-focal="—" data-iso="—" data-camera="Design · Flyer"
                data-src="images/design/flyer-p1.jpg"
                data-pages='["images/design/flyer-p1.jpg"]'
                data-pdf="assets/112025_Flyer-M273_Leo_Staeger.pdf">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="images/design/flyer-p1.jpg" 
                alt="Flyer Design M273" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Gestaltung</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
+        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Gestaltung</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
             <span>Flyer M273</span>
           </div>
         </div>
       </article>
 
       <!-- Imageplakat M274 -->
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="design"
                data-shutter="—" data-aperture="—" data-focal="—" data-iso="—" data-camera="Design · Imageplakat"
                data-src="images/design/plakat-p1.jpg"
                data-pages='["images/design/plakat-p1.jpg"]'
                data-pdf="assets/012025_Imageplakat_M274_Leo_Livio_Ansicht.pdf">
-        <div class="overflow-hidden bg-[#151720]">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="images/design/plakat-p1.jpg" 
                alt="Imageplakat M274" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400">Gestaltung</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
+        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400">Gestaltung</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
             <span>Imageplakat M274</span>
           </div>
         </div>
       </article>
 
       <!-- Konzept SHIFT Teil 3 M275 -->
-      <article class="gallery-item group relative overflow-hidden rounded-xl bg-[#13151c] border border-white/[0.07] cursor-pointer"
+      <article class="gallery-item group relative overflow-hidden rounded-2xl bg-[#0c0c0e] border border-white/[0.08] cursor-pointer"
                data-category="design"
                data-camera-pages="true"
                data-title-de="Design · Konzept SHIFT (11 Seiten)"
@@ -1513,14 +1682,14 @@
                data-shutter="—" data-aperture="—" data-focal="—" data-iso="—" data-camera="Design · Konzept SHIFT (11 Seiten)"
                data-src="images/design/konzept-shift-p1.jpg"
                data-pages='["images/design/konzept-shift-p1.jpg","images/design/konzept-shift-p2.jpg","images/design/konzept-shift-p3.jpg","images/design/konzept-shift-p4.jpg","images/design/konzept-shift-p5.jpg","images/design/konzept-shift-p6.jpg","images/design/konzept-shift-p7.jpg","images/design/konzept-shift-p8.jpg","images/design/konzept-shift-p9.jpg","images/design/konzept-shift-p10.jpg","images/design/konzept-shift-p11.jpg"]'
-               data-pdf="assets/052026_M275_Stäger_Leo_Konzept-SHIFT_Teil3.pdf">
-        <div class="overflow-hidden bg-[#151720]">
+               data-pdf="assets/052026_M275_Stäger_Leo_Konzept-SHIFT_Teil3.pdf">
+        <div class="viewfinder-corners overflow-hidden bg-[#121216]">
           <img src="images/design/konzept-shift-p1.jpg" 
                alt="Konzept SHIFT M275" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-105">
         </div>
-        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-          <span class="text-[10px] tracking-widest uppercase text-zinc-400" data-pages-count="11">Design · 11 Seiten</span>
-          <div class="font-mono text-xs sm:text-sm text-zinc-100 tracking-wide mt-1 flex items-center space-x-2">
+        <div class="gallery-hover-overlay hidden absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+          <span class="text-[10px] tracking-[0.25em] uppercase text-zinc-400" data-pages-count="11">Design · 11 Seiten</span>
+          <div class="font-mono text-xs text-zinc-100 tracking-wide mt-1.5 flex items-center space-x-2">
             <span>Konzept SHIFT Teil 3</span>
           </div>
         </div>
@@ -1529,8 +1698,8 @@
     </div>
   </main>
 
-    <!-- Über Mich Sektion -->
-  <section id="about-section" class="about-section">
+  <!-- Über Mich Sektion -->
+  <section id="about-section" class="relative z-10 about-section">
     <div class="about-divider"></div>
   
     <div class="about-container">
@@ -1549,11 +1718,11 @@
   
       <!-- Steckbrief Spalte -->
       <div class="about-content">
-        <span class="about-subtitle">ABOUT</span>
+        <span class="about-subtitle font-mono">ABOUT // PROFILE</span>
         <h2 class="about-title">LEO STÄGER</h2>
         
         <p class="about-bio" id="about-bio">
-          Lernender Mediamatiker mit viel Interesse an Fotografie & Videografie.
+          Lernender Mediamatiker mit viel Interesse an Fotografie &amp; Videografie.
         </p>
   
         <ul class="about-details">
@@ -1567,7 +1736,7 @@
           </li>
           <li>
             <span class="detail-label">Gear</span>
-            <span class="detail-value">Sony ILCE-7M3</span>
+            <span class="detail-value font-mono text-xs">Sony ILCE-7M3</span>
           </li>
           <li>
             <span class="detail-label" id="about-contact-label">Kontakt</span>
@@ -1579,11 +1748,11 @@
   </section>
 
   <!-- Footer with Swiss Skyline -->
-  <footer class="mt-auto border-t border-white/[0.08] bg-[#000000] text-center text-xs tracking-widest text-neutral-500 uppercase overflow-hidden">
+  <footer class="relative z-10 mt-auto border-t border-white/[0.08] bg-[#050505] text-center text-xs tracking-widest text-neutral-500 uppercase overflow-hidden">
     <!-- Text content bar (Top) -->
-    <div class="pt-5 pb-3">
-      <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-        <div class="text-[11px] sm:text-xs">&copy; <span id="year"></span> LEO STÄGER. ALL RIGHTS RESERVED.</div>
+    <div class="pt-6 pb-4">
+      <div class="max-w-[1600px] mx-auto px-4 sm:px-8 flex flex-col sm:flex-row justify-between items-center gap-3">
+        <div class="text-[11px] font-mono">&copy; <span id="year"></span> LEO STÄGER. ALL RIGHTS RESERVED.</div>
         
         <div class="flex items-center space-x-6 text-neutral-400">
           <a href="https://www.linkedin.com/in/leo-st%C3%A4ger/" 
@@ -1594,15 +1763,71 @@
             <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
             </svg>
-            <span class="text-[11px] sm:text-xs tracking-wider">LinkedIn</span>
+            <span class="text-[11px] tracking-wider">LinkedIn</span>
           </a>
 
-          <span class="footer-link text-[11px] sm:text-xs hover:text-white transition-colors cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Back to Top &uarr;</span>
+          <span class="footer-link text-[11px] hover:text-white transition-colors cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Back to Top &uarr;</span>
         </div>
+
+        <!-- Theme Toggle Button: Embedded in footer on mobile, floating bottom-right on desktop -->
+        <button id="theme-toggle"
+                type="button"
+                class="theme-toggle-btn"
+                aria-label="Design-Modus wechseln"
+                title="Light / Dark Mode umschalten">
+
+          <div class="toggle-track-labels">
+            <div class="toggle-track-moon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor" />
+              </svg>
+            </div>
+            <div class="toggle-track-sun">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="4" fill="currentColor"/>
+                <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <line x1="12" y1="2" x2="12" y2="5"/>
+                  <line x1="12" y1="19" x2="12" y2="22"/>
+                  <line x1="2" y1="12" x2="5" y2="12"/>
+                  <line x1="19" y1="12" x2="22" y2="12"/>
+                  <line x1="4.9" y1="4.9" x2="7" y2="7"/>
+                  <line x1="17" y1="17" x2="19.1" y2="19.1"/>
+                  <line x1="4.9" y1="19.1" x2="7" y2="17"/>
+                  <line x1="17" y1="7" x2="19.1" y2="4.9"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <div class="toggle-knob">
+            <div class="toggle-knob-icon">
+              <div class="knob-moon" style="color:#ffffff">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor"/>
+                </svg>
+              </div>
+              <div class="knob-sun" style="color:#1a1a1a">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="4" fill="currentColor"/>
+                  <g stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                    <line x1="12" y1="2" x2="12" y2="5"/>
+                    <line x1="12" y1="19" x2="12" y2="22"/>
+                    <line x1="2" y1="12" x2="5" y2="12"/>
+                    <line x1="19" y1="12" x2="22" y2="12"/>
+                    <line x1="4.9" y1="4.9" x2="7" y2="7"/>
+                    <line x1="17" y1="17" x2="19.1" y2="19.1"/>
+                    <line x1="4.9" y1="19.1" x2="7" y2="17"/>
+                    <line x1="17" y1="7" x2="19.1" y2="4.9"/>
+                  </g>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </button>
       </div>
     </div>
 
-    <!-- Skyline silhouette underneath the text, stretching continuous (durchgängig) edge-to-edge -->
+    <!-- Skyline silhouette underneath the text -->
     <div class="w-full flex items-end justify-center overflow-hidden h-7 select-none pointer-events-none">
       <svg class="w-full h-full footer-skyline transition-colors duration-500" viewBox="0 0 1440 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M0,40 L0,26 L45,18 L95,24 L145,12 L150,12 L150,6 L160,8 L160,11 L170,11 L170,13 L180,16 L185,5 L190,16 L192,16 L197,4 L202,16 L220,19 L260,12 L290,20 L290,15 L302,8 L314,15 L318,15 L330,10 L342,15 L365,20 L400,14 L440,2 L455,5 L475,18 L505,13 L545,19 L595,12 L640,18 L645,18 L645,12 L652,5 L659,12 L662,12 L669,5 L676,12 L688,12 L694,3 L700,12 L725,16 L765,10 L805,19 L810,19 L820,7 L830,19 L840,13 L875,19 L915,12 L945,7 L960,15 L995,12 L1035,18 L1040,18 L1040,6 L1050,8 L1050,11 L1060,11 L1060,13 L1070,16 L1075,5 L1080,16 L1082,16 L1087,4 L1092,16 L1110,19 L1150,12 L1190,2 L1205,5 L1225,18 L1255,13 L1295,19 L1340,12 L1370,18 L1375,18 L1382,5 L1389,12 L1392,12 L1399,5 L1406,12 L1440,15 L1440,40 Z" />
@@ -1610,81 +1835,23 @@
     </div>
   </footer>
 
-  <!-- Theme Toggle Button: Refined pill with sliding knob -->
-  <button id="theme-toggle"
-          type="button"
-          class="theme-toggle-btn"
-          aria-label="Design-Modus wechseln"
-          title="Light / Dark Mode umschalten">
-
-    <!-- Track background labels (always visible, fade based on mode) -->
-    <div class="toggle-track-labels">
-      <!-- Moon icon (left = dark side) -->
-      <div class="toggle-track-moon">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor" />
-        </svg>
-      </div>
-      <!-- Sun icon (right = light side) -->
-      <div class="toggle-track-sun">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="4" fill="currentColor"/>
-          <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <line x1="12" y1="2" x2="12" y2="5"/>
-            <line x1="12" y1="19" x2="12" y2="22"/>
-            <line x1="2" y1="12" x2="5" y2="12"/>
-            <line x1="19" y1="12" x2="22" y2="12"/>
-            <line x1="4.9" y1="4.9" x2="7" y2="7"/>
-            <line x1="17" y1="17" x2="19.1" y2="19.1"/>
-            <line x1="4.9" y1="19.1" x2="7" y2="17"/>
-            <line x1="17" y1="7" x2="19.1" y2="4.9"/>
-          </g>
-        </svg>
-      </div>
-    </div>
-
-    <!-- Sliding knob -->
-    <div class="toggle-knob">
-      <div class="toggle-knob-icon">
-        <!-- Moon inside knob -->
-        <div class="knob-moon" style="color:#ffffff">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor"/>
-          </svg>
-        </div>
-        <!-- Sun inside knob -->
-        <div class="knob-sun" style="color:#1a1a1a">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="4" fill="currentColor"/>
-            <g stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
-              <line x1="12" y1="2" x2="12" y2="5"/>
-              <line x1="12" y1="19" x2="12" y2="22"/>
-              <line x1="2" y1="12" x2="5" y2="12"/>
-              <line x1="19" y1="12" x2="22" y2="12"/>
-              <line x1="4.9" y1="4.9" x2="7" y2="7"/>
-              <line x1="17" y1="17" x2="19.1" y2="19.1"/>
-              <line x1="4.9" y1="19.1" x2="7" y2="17"/>
-              <line x1="17" y1="7" x2="19.1" y2="4.9"/>
-            </g>
-          </svg>
-        </div>
-      </div>
-    </div>
-  </button>
-
   <!-- Lightbox Modal -->
   <div id="lightbox" 
-       class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-8 bg-black/92 opacity-0 pointer-events-none backdrop-blur-md"
+       class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-8 bg-black/95 opacity-0 pointer-events-none backdrop-blur-xl"
        role="dialog"
        aria-modal="true"
        aria-label="Image Preview">
        
-    <!-- Close Button -->
+    <!-- Top Bar inside Lightbox (Index Counter + Close Button) -->
+    <div class="absolute top-5 left-6 sm:top-7 sm:left-8 z-50 font-mono text-xs tracking-widest text-white/60">
+      <span id="lightbox-index-counter">01 / 01</span>
+    </div>
+
     <button id="lightbox-close" 
             type="button" 
             class="absolute top-5 right-5 sm:top-7 sm:right-7 z-50 p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors focus:outline-none focus:ring-1 focus:ring-white/40 shadow-lg"
             aria-label="Close Lightbox">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M6 18L18 6M6 6l12 12"></path>
       </svg>
     </button>
@@ -1692,7 +1859,7 @@
     <!-- Navigation Previous -->
     <button id="lightbox-prev" 
             type="button" 
-            class="absolute left-3 sm:left-6 md:left-8 z-50 p-3.5 rounded-full bg-black/60 hover:bg-black/85 text-white border border-white/20 backdrop-blur-md transition-all focus:outline-none hidden sm:flex items-center justify-center shadow-2xl hover:scale-105"
+            class="absolute left-3 sm:left-6 md:left-8 z-50 p-3.5 rounded-full bg-white/5 hover:bg-white/15 text-white border border-white/15 backdrop-blur-md transition-all focus:outline-none hidden sm:flex items-center justify-center shadow-2xl hover:scale-105"
             aria-label="Previous image">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
@@ -1702,7 +1869,7 @@
     <!-- Navigation Next -->
     <button id="lightbox-next" 
             type="button" 
-            class="absolute right-3 sm:right-6 md:right-8 z-50 p-3.5 rounded-full bg-black/60 hover:bg-black/85 text-white border border-white/20 backdrop-blur-md transition-all focus:outline-none hidden sm:flex items-center justify-center shadow-2xl hover:scale-105"
+            class="absolute right-3 sm:right-6 md:right-8 z-50 p-3.5 rounded-full bg-white/5 hover:bg-white/15 text-white border border-white/15 backdrop-blur-md transition-all focus:outline-none hidden sm:flex items-center justify-center shadow-2xl hover:scale-105"
             aria-label="Next image">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -1710,26 +1877,23 @@
     </button>
 
     <!-- Content Card -->
-    <div id="lightbox-img-wrapper" class="relative max-w-[calc(100vw-7rem)] md:max-w-[calc(100vw-11rem)] max-h-full flex flex-col items-center scale-95 opacity-0 select-none">
-      <!-- Page-peel stage: shrink-wraps to front image so % positioning is correct -->
+    <div id="lightbox-img-wrapper" class="relative max-w-[calc(100vw-3rem)] sm:max-w-[calc(100vw-8rem)] md:max-w-[calc(100vw-12rem)] max-h-full flex flex-col items-center scale-95 opacity-0 select-none">
+      <!-- Page-peel stage -->
       <div id="lightbox-flip-stage">
-        <!-- New page revealed beneath the current one during flip -->
         <img id="flip-back-img" src="" alt="">
-        <!-- Current page (front) — gets clip-path animation -->
         <img id="lightbox-img"
              src=""
              alt="Portfolio Großansicht"
-             class="max-w-full max-h-[78vh] object-contain rounded-lg shadow-2xl border border-white/10">
-        <!-- Fold-shadow crease that tracks the peel edge -->
+             class="max-w-full max-h-[78vh] object-contain rounded-xl shadow-2xl border border-white/10">
         <div id="flip-fold-edge"></div>
       </div>
       
       <!-- EXIF / Info Bar in Lightbox -->
-      <div class="mt-3 w-full">
-        <div class="lightbox-info-bar flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-lg backdrop-blur-md shadow-xl transition-colors duration-300">
+      <div class="mt-4 w-full">
+        <div class="lightbox-info-bar flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl shadow-2xl transition-colors duration-300">
           <!-- Left: category badge + EXIF -->
           <div class="flex items-center gap-2.5 min-w-0">
-            <span id="lightbox-category" class="shrink-0 uppercase font-semibold text-[9px] tracking-widest border px-2 py-0.5 rounded transition-colors duration-300"></span>
+            <span id="lightbox-category" class="shrink-0 uppercase font-semibold text-[9px] tracking-[0.2em] border px-2 py-0.5 rounded transition-colors duration-300"></span>
             <span id="lightbox-exif" class="font-mono text-xs tracking-wide truncate transition-colors duration-300"></span>
           </div>
           <!-- Right: multi-page PDF pager controls -->
@@ -1741,7 +1905,6 @@
             <button id="lightbox-page-next" type="button" class="p-1.5 transition-colors focus:outline-none rounded" title="Nächste Seite">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
             </button>
-            <!-- Divider + PDF link -->
             <a id="lightbox-pdf-link" href="#" target="_blank" rel="noopener noreferrer"
                class="ml-1 pl-2.5 border-l text-[11px] font-medium transition-colors inline-flex items-center gap-1 tracking-widest uppercase"
                title="Original-PDF öffnen">
@@ -1760,9 +1923,28 @@
       // Set current year
       document.getElementById('year').textContent = new Date().getFullYear();
 
+      // Scroll Progress Indicator
+      const scrollProgress = document.getElementById('scroll-progress');
+      window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        if (scrollProgress) scrollProgress.style.width = `${pct}%`;
+      }, { passive: true });
+
+      // Custom Editorial Cursor
+      const customCursor = document.getElementById('custom-cursor');
+      if (customCursor) {
+        window.addEventListener('mousemove', (e) => {
+          customCursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) scale(${customCursor.classList.contains('is-active') ? 1 : 0.4})`;
+        }, { passive: true });
+      }
+
       // Collect Elements
       const filterBtns = document.querySelectorAll('.filter-btn');
       const brandHomeLink = document.getElementById('brand-home-link');
+      const backToHomePill = document.getElementById('back-to-home-pill');
+      const heroIntro = document.getElementById('hero-intro');
       const galleryItems = Array.from(document.querySelectorAll('.gallery-item'));
       const activeCategoryLabel = document.getElementById('active-category-label');
       const itemCounter = document.getElementById('item-counter');
@@ -1772,6 +1954,7 @@
       const lightboxImg = document.getElementById('lightbox-img');
       const lightboxCategory = document.getElementById('lightbox-category');
       const lightboxExif = document.getElementById('lightbox-exif');
+      const lightboxIndexCounter = document.getElementById('lightbox-index-counter');
       const lightboxClose = document.getElementById('lightbox-close');
       const lightboxPrev = document.getElementById('lightbox-prev');
       const lightboxNext = document.getElementById('lightbox-next');
@@ -1798,6 +1981,9 @@
       const i18n = {
         de: {
           brandTitle: 'Zurück zur Startseite',
+          backToOverview: 'Übersicht',
+          heroTitleHTML: 'Momente zwischen <span class="italic font-light text-zinc-300">Licht</span> &amp; <span class="italic font-light text-zinc-300">Präzision</span>.',
+          heroSubtitle: 'Ausgewählte Arbeiten aus Wildlife, Luftfahrt, Landschaft, Kulinarik und visueller Gestaltung. Wähle eine Kollektion für die Vollbild-Ansicht.',
           activeCategories: {
             'home': 'Home — Übersicht',
             'animals': 'Tiere Galerie',
@@ -1807,6 +1993,7 @@
             'design': 'Gestaltung Galerie'
           },
           categoryLabels: {
+            'home': 'Home',
             'animals': 'Tiere',
             'aviation': 'Aviatik',
             'environments': 'Umgebungen',
@@ -1815,7 +2002,7 @@
           },
           openGallery: 'Galerie öffnen &rarr;',
           categoriesCount: (n) => `${n} Kategorien`,
-          photosCount: (n) => `${n} Fotos`,
+          photosCount: (n) => `${n} Werke`,
           aboutBio: 'Lernender Mediamatiker mit viel Interesse an Fotografie & Videografie.',
           aboutLocationLabel: 'Standort',
           aboutLocationValue: 'Schweiz',
@@ -1836,6 +2023,9 @@
         },
         en: {
           brandTitle: 'Back to Home',
+          backToOverview: 'Overview',
+          heroTitleHTML: 'Moments between <span class="italic font-light text-zinc-300">Light</span> &amp; <span class="italic font-light text-zinc-300">Precision</span>.',
+          heroSubtitle: 'Selected works across wildlife, aviation, landscapes, culinary photography, and editorial design. Choose a collection to explore.',
           activeCategories: {
             'home': 'Home — Overview',
             'animals': 'Animals Gallery',
@@ -1845,6 +2035,7 @@
             'design': 'Design Gallery'
           },
           categoryLabels: {
+            'home': 'Home',
             'animals': 'Animals',
             'aviation': 'Aviation',
             'environments': 'Environments',
@@ -1853,7 +2044,7 @@
           },
           openGallery: 'Open gallery &rarr;',
           categoriesCount: (n) => `${n} Categories`,
-          photosCount: (n) => `${n} Photos`,
+          photosCount: (n) => `${n} Works`,
           aboutBio: 'Mediamatics apprentice with a strong passion for photography & videography.',
           aboutLocationLabel: 'Location',
           aboutLocationValue: 'Switzerland',
@@ -1880,13 +2071,8 @@
         document.documentElement.lang = currentLang;
 
         if (langIndicatorDe && langIndicatorEn) {
-          if (isDe) {
-            langIndicatorDe.className = 'transition-colors lang-active';
-            langIndicatorEn.className = 'transition-colors lang-inactive';
-          } else {
-            langIndicatorDe.className = 'transition-colors lang-inactive';
-            langIndicatorEn.className = 'transition-colors lang-active';
-          }
+          langIndicatorDe.className = isDe ? 'transition-colors lang-active' : 'transition-colors lang-inactive';
+          langIndicatorEn.className = isDe ? 'transition-colors lang-inactive' : 'transition-colors lang-active';
         }
 
         if (langToggleBtn) {
@@ -1894,16 +2080,29 @@
           langToggleBtn.title = t.langToggleTitle;
         }
 
-        if (brandHomeLink) {
-          brandHomeLink.title = t.brandTitle;
+        if (brandHomeLink) brandHomeLink.title = t.brandTitle;
+
+        const backToHomeText = document.getElementById('back-to-home-text');
+        if (backToHomeText) backToHomeText.textContent = t.backToOverview;
+
+        const heroTitle = document.getElementById('hero-title');
+        if (heroTitle) {
+          heroTitle.innerHTML = t.heroTitleHTML;
+          if (isLightMode) {
+            heroTitle.querySelectorAll('span').forEach(s => {
+              s.classList.remove('text-zinc-300');
+              s.classList.add('text-zinc-500');
+            });
+          }
         }
 
-        // Cover button labels
+        const heroSubtitle = document.getElementById('hero-subtitle');
+        if (heroSubtitle) heroSubtitle.textContent = t.heroSubtitle;
+
         document.querySelectorAll('.cover-open-gallery').forEach(el => {
           el.innerHTML = t.openGallery;
         });
 
-        // About section
         const aboutBio = document.getElementById('about-bio');
         if (aboutBio) aboutBio.textContent = t.aboutBio;
 
@@ -1922,47 +2121,32 @@
         const aboutContactLabel = document.getElementById('about-contact-label');
         if (aboutContactLabel) aboutContactLabel.textContent = t.aboutContactLabel;
 
-        // Filter navigation buttons
         filterBtns.forEach(btn => {
           const cat = btn.getAttribute('data-filter');
           if (cat && t.categoryLabels[cat]) {
-            btn.textContent = t.categoryLabels[cat];
-          }
-        });
-
-        // Home Cover title overlays & gallery hover tags
-        galleryItems.forEach(item => {
-          const cat = item.getAttribute('data-category');
-          if (cat && t.categoryLabels[cat]) {
-            const homeOverlayTitle = item.querySelector('.home-title-overlay > span:first-child');
-            if (homeOverlayTitle) {
-              homeOverlayTitle.textContent = t.categoryLabels[cat];
-            }
-            const hoverTag = item.querySelector('.gallery-hover-overlay > span:first-child');
-            if (hoverTag && !item.hasAttribute('data-camera-pages')) {
-              hoverTag.textContent = t.categoryLabels[cat];
+            const labelSpan = btn.querySelector('.filter-label');
+            if (labelSpan) {
+              labelSpan.textContent = t.categoryLabels[cat];
+            } else {
+              btn.textContent = t.categoryLabels[cat];
             }
           }
         });
 
-        // Design cards pages count
         document.querySelectorAll('[data-pages-count]').forEach(el => {
           const count = el.getAttribute('data-pages-count');
           el.textContent = t.designPages(count);
         });
 
-        // Design cards camera metadata attributes
         document.querySelectorAll('[data-camera-pages]').forEach(el => {
           const title = isDe ? el.getAttribute('data-title-de') : el.getAttribute('data-title-en');
           if (title) el.setAttribute('data-camera', title);
         });
 
-        // Unavailable metadata spans
         document.querySelectorAll('.meta-unavailable').forEach(el => {
           el.textContent = t.noMetadata;
         });
 
-        // Lightbox buttons
         if (lightboxPagePrev) lightboxPagePrev.title = t.prevPage;
         if (lightboxPageNext) lightboxPageNext.title = t.nextPage;
         if (lightboxPdfLink) lightboxPdfLink.title = t.openPdf;
@@ -1970,7 +2154,6 @@
         if (lightboxPrev) lightboxPrev.setAttribute('aria-label', t.prevImage);
         if (lightboxNext) lightboxNext.setAttribute('aria-label', t.nextImage);
 
-        // Lightbox live indicators if open
         if (lightbox && lightbox.classList.contains('is-open')) {
           if (currentFilteredItems[currentLightboxIndex]) {
             const cat = currentFilteredItems[currentLightboxIndex].getAttribute('data-category');
@@ -1986,7 +2169,6 @@
           }
         }
 
-        // Header labels
         if (activeCategoryLabel) {
           activeCategoryLabel.textContent = t.activeCategories[currentFilter] || 'Portfolio';
         }
@@ -2030,12 +2212,12 @@
           if (isActive) {
             b.classList.add('active-filter');
             if (isLightMode) {
-              b.classList.remove('bg-white', 'text-[#0c0d12]');
+              b.classList.remove('bg-white', 'text-[#050505]');
             } else {
-              b.classList.add('bg-white', 'text-[#0c0d12]');
+              b.classList.add('bg-white', 'text-[#050505]');
             }
           } else {
-            b.classList.remove('active-filter', 'bg-white', 'text-[#0c0d12]');
+            b.classList.remove('active-filter', 'bg-white', 'text-[#050505]');
           }
         });
       }
@@ -2055,39 +2237,44 @@
       function applyFilter(filterValue) {
         currentFilter = filterValue;
 
-        // Switch Grid Layout classes for Home (2/4 Grid) vs Galleries
         const galleryContainer = document.getElementById('gallery');
         if (filterValue === 'home') {
           galleryContainer.classList.remove('category-grid');
           galleryContainer.classList.add('home-grid');
           galleryContainer.style.removeProperty('--cat-cols');
+          if (heroIntro) heroIntro.classList.remove('hidden');
+          if (backToHomePill) {
+            backToHomePill.classList.add('hidden');
+            backToHomePill.classList.remove('inline-flex');
+          }
         } else {
           galleryContainer.classList.remove('home-grid');
           galleryContainer.classList.add('category-grid');
-          // Count items that will be visible for this filter
+          if (heroIntro) heroIntro.classList.add('hidden');
+          if (backToHomePill) {
+            backToHomePill.classList.remove('hidden');
+            backToHomePill.classList.add('inline-flex');
+          }
           const visibleCount = galleryItems.filter(i => i.getAttribute('data-category') === filterValue).length;
-          // Cap columns so the right side is never left empty:
-          // ≤2 items → 1 col; ≤4 → 2 cols; ≤6 → 3 cols; else → 4 cols (default breakpoint max)
           const maxCols = visibleCount <= 2 ? 1 : visibleCount <= 4 ? 2 : visibleCount <= 6 ? 3 : 4;
           galleryContainer.style.setProperty('--cat-cols', maxCols);
         }
 
-        // Update active button state styles
         filterBtns.forEach(b => {
           if (b.getAttribute('data-filter') === filterValue) {
             b.classList.add('active-filter');
             if (!isLightMode) {
-              b.classList.add('bg-white', 'text-[#0c0d12]', 'font-medium', 'border-white/20');
+              b.classList.add('bg-white', 'text-[#050505]', 'font-medium', 'border-white/20');
               b.classList.remove('text-zinc-400', 'border-white/10');
             }
           } else {
-            b.classList.remove('active-filter', 'bg-white', 'text-[#0c0d12]', 'font-medium', 'border-white/20');
+            b.classList.remove('active-filter', 'bg-white', 'text-[#050505]', 'font-medium', 'border-white/20');
             b.classList.add('border-white/10', 'text-zinc-400');
           }
         });
         updateThemeButtons();
 
-        // Toggle badge / overlays visibility and items
+        let staggerIdx = 0;
         galleryItems.forEach(item => {
           const itemCat = item.getAttribute('data-category');
           const isCover = item.getAttribute('data-is-cover') === 'true';
@@ -2107,16 +2294,17 @@
 
           if (shouldShow) {
             item.classList.remove('hidden-item');
-            requestAnimationFrame(() => {
+            const delay = Math.min(staggerIdx * 45, 360);
+            staggerIdx++;
+            setTimeout(() => {
               item.classList.add('visible-item');
-            });
+            }, delay);
           } else {
             item.classList.remove('visible-item');
             item.classList.add('hidden-item');
           }
         });
 
-        // Update current filtered items list for lightbox navigation
         currentFilteredItems = galleryItems.filter(item => {
           if (filterValue === 'home') {
             return item.getAttribute('data-is-cover') === 'true';
@@ -2124,14 +2312,12 @@
           return item.getAttribute('data-category') === filterValue;
         });
 
-        // Update Header Labels
         const t = i18n[currentLang];
         activeCategoryLabel.textContent = t.activeCategories[filterValue] || 'Portfolio';
         itemCounter.textContent = filterValue === 'home' 
           ? t.categoriesCount(currentFilteredItems.length) 
           : t.photosCount(currentFilteredItems.length);
 
-        // About section is only visible on the starting page (home)
         if (aboutSection) {
           if (filterValue === 'home') {
             aboutSection.classList.remove('hidden');
@@ -2149,7 +2335,6 @@
         });
       });
 
-      // Clicking "LEO STÄGER | PHOTOGRAPHY" brings user back to Home
       if (brandHomeLink) {
         brandHomeLink.addEventListener('click', (e) => {
           e.preventDefault();
@@ -2158,11 +2343,25 @@
         });
       }
 
+      if (backToHomePill) {
+        backToHomePill.addEventListener('click', () => {
+          applyFilter('home');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+
       // ----------------------------------------------------
-      // Item Click Handling: Home -> Switch Gallery, Others -> Lightbox
+      // Item Click & Custom Cursor Hover
       // ----------------------------------------------------
       galleryItems.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+          if (customCursor) customCursor.classList.add('is-active');
+        });
+        item.addEventListener('mouseleave', () => {
+          if (customCursor) customCursor.classList.remove('is-active');
+        });
         item.addEventListener('click', () => {
+          if (customCursor) customCursor.classList.remove('is-active');
           if (currentFilter === 'home') {
             const targetCategory = item.getAttribute('data-category');
             if (targetCategory) {
@@ -2176,13 +2375,12 @@
       });
 
       // ----------------------------------------------------
-      // Page-peel animation: clip the current page away while revealing the next
+      // Page-peel animation
       // ----------------------------------------------------
       const flipBackImg  = document.getElementById('flip-back-img');
       const flipFoldEdge = document.getElementById('flip-fold-edge');
 
       function runPageFlip(direction, newSrc, callback) {
-        // Graceful fallback if elements missing
         if (!flipBackImg || !flipFoldEdge) {
           lightboxImg.src = newSrc;
           if (callback) callback();
@@ -2192,15 +2390,11 @@
         const exitClass = direction === 'forward' ? 'flip-exit-fwd' : 'flip-exit-bwd';
         const edgeClass = direction === 'forward' ? 'edge-fwd'      : 'edge-bwd';
 
-        // Put the new page behind, invisible but ready
         flipBackImg.src = newSrc;
-
-        // Kick off the peel + shadow-crease animations together
         lightboxImg.classList.add(exitClass);
         flipFoldEdge.classList.add(edgeClass);
 
         lightboxImg.addEventListener('animationend', function onDone() {
-          // Swap front image to the new page, reset animation state
           lightboxImg.src = newSrc;
           lightboxImg.classList.remove(exitClass);
           flipFoldEdge.classList.remove(edgeClass);
@@ -2209,7 +2403,8 @@
         }, { once: true });
       }
 
-      // Lightbox Operations (Showing EXIF: ISO, Shutter, Aperture & Multi-page PDFs)
+      // ----------------------------------------------------
+      // Lightbox Operations
       // ----------------------------------------------------
       function updateLightboxPage(pageIdx, direction) {
         if (!currentItemPages.length) return;
@@ -2222,7 +2417,6 @@
           lightboxPageIndicator.textContent = i18n[currentLang].pageIndicator(currentPageIndex + 1, currentItemPages.length);
         }
 
-        // Only animate multi-page documents; single photos just swap
         if (currentItemPages.length > 1) {
           runPageFlip(flipDir, newSrc, null);
         } else {
@@ -2234,6 +2428,12 @@
         if (!currentFilteredItems.length) return;
         currentLightboxIndex = (index + currentFilteredItems.length) % currentFilteredItems.length;
         const currentItem = currentFilteredItems[currentLightboxIndex];
+
+        if (lightboxIndexCounter) {
+          const curStr = String(currentLightboxIndex + 1).padStart(2, '0');
+          const totStr = String(currentFilteredItems.length).padStart(2, '0');
+          lightboxIndexCounter.textContent = `${curStr} / ${totStr}`;
+        }
         
         const imgSrc = currentItem.getAttribute('data-src');
         const shutter = currentItem.getAttribute('data-shutter') || '—';
@@ -2271,8 +2471,6 @@
 
         lightboxExif.textContent = exifSpecs.length ? exifSpecs.join('  ·  ') : i18n[currentLang].noMetadata;
 
-        // PDF / Multi-page pager visibility:
-        // Seitenwechsler für "design" / "Gestaltung" ausblenden, nur PDF-Button anzeigen falls vorhanden
         const showPagePager = currentItemPages.length > 1 && category !== 'design';
 
         if (showPagePager || pdfPath) {
@@ -2319,7 +2517,6 @@
       }
 
       function showPrevImage() {
-        // If current item has multiple pages, page back first or switch item
         if (currentItemPages.length > 1 && currentPageIndex > 0) {
           updateLightboxPage(currentPageIndex - 1, 'backward');
         } else {
@@ -2331,7 +2528,6 @@
       }
 
       function showNextImage() {
-        // If current item has multiple pages, page forward first or switch item
         if (currentItemPages.length > 1 && currentPageIndex < currentItemPages.length - 1) {
           updateLightboxPage(currentPageIndex + 1, 'forward');
         } else {
@@ -2339,7 +2535,6 @@
         }
       }
 
-      // Page buttons for multi-page documents
       if (lightboxPagePrev) {
         lightboxPagePrev.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -2353,13 +2548,11 @@
         });
       }
 
-      // Close button
       lightboxClose.addEventListener('click', (e) => {
         e.stopPropagation();
         closeLightbox();
       });
 
-      // Prev / Next button clicks
       lightboxPrev.addEventListener('click', (e) => {
         e.stopPropagation();
         showPrevImage();
@@ -2370,14 +2563,12 @@
         showNextImage();
       });
 
-      // Click outside image closes lightbox
       lightbox.addEventListener('click', (e) => {
         if (e.target === lightbox || e.target.id === 'lightbox-img-wrapper') {
           closeLightbox();
         }
       });
 
-      // Keyboard navigation
       window.addEventListener('keydown', (e) => {
         if (!lightbox.classList.contains('is-open')) return;
 
@@ -2390,7 +2581,6 @@
         }
       });
 
-      // Mobile swipe gesture support
       let touchStartX = 0;
       let touchEndX = 0;
 
@@ -2410,7 +2600,7 @@
         }
       }, { passive: true });
 
-      // Initialize default view to "Home" (1 Cover per Category)
+      // Initialize default view to "Home"
       applyFilter('home');
       updateLanguageUI();
     });
