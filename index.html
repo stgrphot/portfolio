@@ -821,20 +821,14 @@
       background-color: rgba(250, 250, 250, 0.88);
       border-color: rgba(0, 0, 0, 0.08);
     }
-    body.light-mode #brand-home-link h1 {
-      color: #71717a;
+    body.light-mode #brand-home-link span:first-child {
+      color: #52525b !important;
     }
-    body.light-mode #brand-home-link p {
-      color: #09090b;
+    body.light-mode #brand-home-link:hover span:first-child {
+      color: #09090b !important;
     }
-    body.light-mode #hero-headline {
-      color: #09090b;
-    }
-    body.light-mode #hero-subline {
-      color: #52525b;
-    }
-    body.light-mode .hero-rule {
-      background-color: rgba(0, 0, 0, 0.1);
+    body.light-mode #brand-home-link span:last-child {
+      color: #09090b !important;
     }
     body.light-mode .filter-btn {
       border-color: rgba(0, 0, 0, 0.14);
@@ -1574,22 +1568,6 @@
 
   <!-- Gallery Content Container -->
   <main class="relative z-10 flex-grow max-w-[1600px] w-full mx-auto px-4 sm:px-8 pt-8 sm:pt-12 pb-12">
-    
-    <!-- Editorial Hero Statement (Visible on Home) -->
-    <section id="editorial-hero" class="mb-10 sm:mb-14">
-      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-white/[0.08] hero-rule hero-animate-rule">
-        <div>
-          <div class="hero-line-clip">
-            <h2 id="hero-headline" class="hero-animate-title text-3xl sm:text-5xl lg:text-6xl font-serif font-normal tracking-tight text-white leading-[1.12]">
-              Momente zwischen Licht &amp; Präzision.
-            </h2>
-          </div>
-        </div>
-        <p id="hero-subline" class="hero-animate-sub text-xs sm:text-sm text-zinc-400 font-light max-w-md leading-relaxed">
-          Kuratiertes Portfolio für Tierfotografie, Aviatik, Landschaften, Kulinarik und visuelle Gestaltung.
-        </p>
-      </div>
-    </section>
 
     <!-- Item Counter & Active Filter Indication -->
     <div class="flex justify-between items-center text-[11px] font-mono tracking-[0.2em] uppercase text-zinc-500 mb-6 px-0.5">
@@ -2848,8 +2826,7 @@
         skylineLayers.forEach(layer => {
           const depth = parseFloat(layer.getAttribute('data-depth') || '1');
           const scrollYShift = Math.min(remaining * 0.06 * depth, 18 * depth);
-          const mouseXShift = footerMouseOffsetX * (28 * depth);
-          layer.style.transform = `translate3d(${mouseXShift.toFixed(2)}px, ${scrollYShift.toFixed(2)}px, 0)`;
+          layer.style.transform = `translate3d(0px, ${scrollYShift.toFixed(2)}px, 0)`;
         });
       }
 
@@ -2861,18 +2838,6 @@
         updateSkylineParallax();
       }, { passive: true });
 
-      if (siteFooter && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-        siteFooter.addEventListener('mousemove', (e) => {
-          const rect = siteFooter.getBoundingClientRect();
-          footerMouseOffsetX = ((e.clientX - rect.left) / rect.width) - 0.5;
-          updateSkylineParallax();
-        }, { passive: true });
-
-        siteFooter.addEventListener('mouseleave', () => {
-          footerMouseOffsetX = 0;
-          updateSkylineParallax();
-        });
-      }
       updateSkylineParallax();
 
       // Scroll-Reveal Observer for About Section
@@ -2921,7 +2886,6 @@
       const galleryItems = Array.from(document.querySelectorAll('.gallery-item'));
       const activeCategoryLabel = document.getElementById('active-category-label');
       const itemCounter = document.getElementById('item-counter');
-      const editorialHero = document.getElementById('editorial-hero');
 
       const lightbox = document.getElementById('lightbox');
       const lightboxImg = document.getElementById('lightbox-img');
@@ -2952,8 +2916,6 @@
         de: {
           brandTitle: 'Zurück zur Startseite',
           homeLabel: 'Home',
-          heroHeadline: 'Momente zwischen Licht & Präzision.',
-          heroSubline: 'Kuratiertes Portfolio für Tierfotografie, Aviatik, Landschaften, Kulinarik und visuelle Gestaltung.',
           activeCategories: {
             'home': 'Home — Übersicht',
             'animals': 'Tiere Galerie',
@@ -2991,8 +2953,6 @@
         en: {
           brandTitle: 'Back to Home',
           homeLabel: 'Home',
-          heroHeadline: 'Moments between Light & Precision.',
-          heroSubline: 'Curated visual archive spanning wildlife, aviation, landscapes, culinary photography, and editorial design.',
           activeCategories: {
             'home': 'Home — Overview',
             'animals': 'Animals Gallery',
@@ -3046,11 +3006,6 @@
 
         if (brandHomeLink) brandHomeLink.title = t.brandTitle;
 
-        const heroHeadline = document.getElementById('hero-headline');
-        const heroSubline = document.getElementById('hero-subline');
-        if (heroHeadline) heroHeadline.textContent = t.heroHeadline;
-        if (heroSubline) heroSubline.textContent = t.heroSubline;
-
         const showreelPosterLabel = document.getElementById('cinema-poster-label');
         if (showreelPosterLabel) showreelPosterLabel.textContent = t.showreelPlay;
 
@@ -3086,8 +3041,9 @@
           if (cat && t.categoryLabels[cat]) {
             const homeOverlayTitle = item.querySelector('.home-title-overlay > span:nth-child(2)');
             if (homeOverlayTitle) homeOverlayTitle.textContent = t.categoryLabels[cat];
-            const hoverTag = item.querySelector('.gallery-hover-overlay > span:first-child');
-            if (hoverTag && !item.hasAttribute('data-camera-pages')) {
+            // Update both cover hover overlays and standard gallery item hover overlays
+            const hoverTag = item.querySelector('.gallery-hover-overlay > span:first-child, :scope > div:last-child > span:first-child');
+            if (hoverTag && !item.hasAttribute('data-camera-pages') && !hoverTag.hasAttribute('data-pages-count')) {
               hoverTag.textContent = t.categoryLabels[cat];
             }
           }
@@ -3200,22 +3156,9 @@
           galleryContainer.classList.remove('category-grid');
           galleryContainer.classList.add('home-grid');
           galleryContainer.style.removeProperty('--cat-cols');
-          if (editorialHero) {
-            editorialHero.classList.remove('hidden');
-            const titleEl = document.getElementById('hero-headline');
-            const subEl = document.getElementById('hero-subline');
-            const ruleEl = editorialHero.querySelector('.hero-rule');
-            [titleEl, subEl, ruleEl].forEach(el => {
-              if (!el) return;
-              el.style.animation = 'none';
-              void el.offsetWidth;
-              el.style.animation = '';
-            });
-          }
         } else {
           galleryContainer.classList.remove('home-grid');
           galleryContainer.classList.add('category-grid');
-          if (editorialHero) editorialHero.classList.add('hidden');
           const visibleCount = galleryItems.filter(i => i.getAttribute('data-category') === filterValue).length;
           const maxCols = visibleCount <= 2 ? 1 : visibleCount <= 4 ? 2 : visibleCount <= 6 ? 3 : 4;
           galleryContainer.style.setProperty('--cat-cols', maxCols);
