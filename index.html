@@ -547,13 +547,17 @@
     }
 
     #lightbox-flip-stage.is-magazine-spread {
-      width: min(94vw, 138vh);
-      height: min(68vh, 66vw);
+      aspect-ratio: var(--spread-aspect, 1.414 / 1);
+      height: min(68vh, calc(94vw / var(--spread-aspect, 1.414)));
+      width: auto;
+      max-width: 94vw;
+      max-height: 68vh;
     }
     @media (min-width: 640px) {
       #lightbox-flip-stage.is-magazine-spread {
-        width: min(86vw, 138vh);
-        height: min(76vh, 61vw);
+        height: min(76vh, calc(86vw / var(--spread-aspect, 1.414)));
+        max-width: 86vw;
+        max-height: 76vh;
       }
     }
 
@@ -571,14 +575,14 @@
       height: 100%;
       max-width: none;
       max-height: none;
-      object-fit: contain;
+      object-fit: fill;
     }
 
     /* Single Cover Alignment (First page = Right half, Last page = Left half) */
     #lightbox-flip-stage.is-magazine-spread.is-front-cover #lightbox-img {
       width: 50%;
       margin-left: 50%;
-      object-position: left center;
+      object-fit: fill;
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
       box-shadow: 0 28px 60px -12px rgba(0, 0, 0, 0.85), -2px 0 8px rgba(0, 0, 0, 0.5);
@@ -586,7 +590,7 @@
     #lightbox-flip-stage.is-magazine-spread.is-back-cover #lightbox-img {
       width: 50%;
       margin-right: 50%;
-      object-position: right center;
+      object-fit: fill;
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
       box-shadow: 0 28px 60px -12px rgba(0, 0, 0, 0.85), 2px 0 8px rgba(0, 0, 0, 0.5);
@@ -3687,6 +3691,17 @@
         return GITHUB_RAW_BASE + path;
       }
 
+      function syncSpreadStageAspect(spreadUrl) {
+        if (!flipStage || !spreadUrl) return;
+        const probe = new Image();
+        probe.onload = () => {
+          if (probe.naturalWidth > 0 && probe.naturalHeight > 0) {
+            flipStage.style.setProperty('--spread-aspect', (probe.naturalWidth / probe.naturalHeight).toFixed(5));
+          }
+        };
+        probe.src = resolveImageUrl(spreadUrl);
+      }
+
       function applyCoverPositionClasses(pageIdx, totalPages, isSpreadMode) {
         if (!flipStage || !magazineSpineGutter) return;
         const isFrontCover = isSpreadMode && pageIdx === 0;
@@ -3876,6 +3891,12 @@
         const isMultiPageSpread = currentItemPages.length > 1;
         if (flipStage) {
           flipStage.classList.toggle('is-magazine-spread', isMultiPageSpread);
+          if (isMultiPageSpread) {
+            const refSpread = currentItemPages.length > 2 ? currentItemPages[1] : currentItemPages[0];
+            syncSpreadStageAspect(refSpread);
+          } else {
+            flipStage.style.removeProperty('--spread-aspect');
+          }
           applyCoverPositionClasses(0, currentItemPages.length, isMultiPageSpread);
         }
 
