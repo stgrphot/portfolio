@@ -1058,23 +1058,198 @@
       width: 100%;
       padding-bottom: 56.25%;
       background-color: #08080a;
-      border-radius: 14px;
+      border-radius: 16px;
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8);
-      transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 28px 65px -15px rgba(0, 0, 0, 0.85);
+      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s ease, border-color 0.45s ease;
+      user-select: none;
     }
     .about-video-frame:hover {
-      border-color: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.28);
+      box-shadow: 0 32px 75px -15px rgba(0, 0, 0, 0.92);
     }
     
-    .about-video-frame iframe {
+    /* Oversized wrapper crops native YouTube top/bottom bars while keeping 16:9 clean */
+    .yt-clean-crop {
       position: absolute;
-      top: 0;
+      top: -12%;
       left: 0;
+      width: 100%;
+      height: 124%;
+      pointer-events: none;
+    }
+    .yt-clean-crop iframe {
       width: 100%;
       height: 100%;
       border: 0;
+    }
+
+    /* Custom Cinema Poster / Cover Overlay before playback starts */
+    .cinema-poster-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, rgba(10, 10, 14, 0.28) 0%, rgba(5, 5, 8, 0.86) 100%);
+      transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.55s;
+      cursor: pointer;
+    }
+    .cinema-poster-overlay.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .cinema-poster-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.58;
+      filter: contrast(1.06) saturate(0.92);
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
+    }
+    .about-video-frame:hover .cinema-poster-bg {
+      transform: scale(1.04);
+      opacity: 0.72;
+    }
+
+    /* Viewfinder HUD Corners inside Custom Player */
+    .cinema-hud-corners::before,
+    .cinema-hud-corners::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-color: rgba(255, 255, 255, 0.45);
+      border-style: solid;
+      pointer-events: none;
+      z-index: 12;
+    }
+    .cinema-hud-corners::before {
+      top: 14px;
+      left: 14px;
+      border-width: 1px 0 0 1px;
+    }
+    .cinema-hud-corners::after {
+      top: 14px;
+      right: 14px;
+      border-width: 1px 1px 0 0;
+    }
+
+    /* Magnetic Glass Play Button */
+    .cinema-play-orb {
+      position: relative;
+      z-index: 15;
+      width: 68px;
+      height: 68px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, border-color 0.3s ease;
+    }
+    .cinema-poster-overlay:hover .cinema-play-orb {
+      transform: scale(1.1);
+      background: rgba(255, 255, 255, 0.24);
+      border-color: rgba(255, 255, 255, 0.65);
+    }
+
+    /* Transparent Click Catcher for Play/Pause while playing */
+    .cinema-click-surface {
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+      cursor: pointer;
+    }
+
+    /* Custom Glassmorphic Bottom Control Deck */
+    .cinema-controls-bar {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      z-index: 20;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: rgba(12, 12, 15, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .about-video-frame:hover .cinema-controls-bar,
+    .about-video-frame.is-paused .cinema-controls-bar,
+    .about-video-frame.controls-visible .cinema-controls-bar {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .about-video-frame:not(.has-started) .cinema-controls-bar {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Interactive Scrubber Timeline */
+    .cinema-scrubber {
+      position: relative;
+      width: 100%;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .cinema-scrubber-track {
+      position: relative;
+      width: 100%;
+      height: 3px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.18);
+      overflow: visible;
+      transition: height 0.2s ease;
+    }
+    .cinema-scrubber:hover .cinema-scrubber-track {
+      height: 5px;
+    }
+    .cinema-scrubber-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 0%;
+      border-radius: 9999px;
+      background: #ffffff;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+    .cinema-scrubber-thumb {
+      position: absolute;
+      right: -5px;
+      top: 50%;
+      width: 11px;
+      height: 11px;
+      border-radius: 9999px;
+      background: #ffffff;
+      transform: translateY(-50%) scale(0);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+    }
+    .cinema-scrubber:hover .cinema-scrubber-thumb {
+      transform: translateY(-50%) scale(1);
     }
     
     .about-subtitle {
@@ -2029,16 +2204,93 @@
     <div class="about-divider"></div>
   
     <div class="about-container">
-      <!-- Video Spalte -->
+      <!-- Custom Cinema Showreel Player Spalte -->
       <div class="about-video-wrapper about-reveal-item">
-        <div class="about-video-frame">
-          <iframe 
-            src="https://www.youtube.com/embed/leljeVcVIek?si=jUiiEQe3zP9Vj2ht" 
-            title="About Video" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-            allowfullscreen>
-          </iframe>
+        <div id="custom-video-player" class="about-video-frame cinema-hud-corners">
+          <!-- Cropped YouTube IFrame API Target -->
+          <div class="yt-clean-crop">
+            <div id="yt-player-target"></div>
+          </div>
+
+          <!-- Surface for Play/Pause click -->
+          <div id="cinema-click-surface" class="cinema-click-surface" aria-label="Video abspielen / pausieren"></div>
+
+          <!-- Editorial Poster Overlay before start -->
+          <div id="cinema-poster" class="cinema-poster-overlay">
+            <img src="https://i.ytimg.com/vi/leljeVcVIek/maxresdefault.jpg"
+                 onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/leljeVcVIek/hqdefault.jpg';"
+                 alt="Leo Stäger Showreel Cover"
+                 class="cinema-poster-bg">
+            
+            <!-- Top Status Pill -->
+            <div class="absolute top-4 left-6 z-15 flex items-center gap-2 px-2.5 py-1 rounded-full bg-black/55 backdrop-blur-md border border-white/15">
+              <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+              <span id="cinema-badge-text" class="font-mono text-[9px] tracking-[0.25em] uppercase text-zinc-200">SHOWREEL // 16:9</span>
+            </div>
+
+            <!-- Center Magnetic Play Orb -->
+            <button type="button" class="cinema-play-orb" aria-label="Showreel abspielen">
+              <svg class="w-6 h-6 ml-0.5 fill-current" viewBox="0 0 24 24">
+                <path d="M8 5.14v14l11-7-11-7z"/>
+              </svg>
+            </button>
+
+            <!-- Bottom Editorial Caption -->
+            <div class="relative z-15 mt-4 text-center px-4">
+              <p id="cinema-poster-title" class="font-serif text-sm sm:text-base tracking-[0.2em] uppercase text-white drop-shadow">Showreel &amp; Einblick</p>
+              <p id="cinema-poster-sub" class="font-mono text-[10px] tracking-[0.22em] uppercase text-zinc-300/80 mt-1">Klicken zum Abspielen</p>
+            </div>
+          </div>
+
+          <!-- Custom Glassmorphic Control Deck -->
+          <div class="cinema-controls-bar" id="cinema-controls-bar">
+            <!-- Timeline Scrubber -->
+            <div class="cinema-scrubber" id="cinema-scrubber" role="slider" aria-label="Videoposition">
+              <div class="cinema-scrubber-track">
+                <div class="cinema-scrubber-fill" id="cinema-scrubber-fill">
+                  <div class="cinema-scrubber-thumb"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Control Buttons Row -->
+            <div class="flex items-center justify-between gap-3 text-white">
+              <div class="flex items-center gap-3">
+                <!-- Play / Pause -->
+                <button type="button" id="cinema-play-btn" class="p-1 text-white/90 hover:text-white transition-transform hover:scale-110 focus:outline-none" aria-label="Play / Pause">
+                  <svg id="cinema-icon-play" class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M8 5.14v14l11-7-11-7z"/>
+                  </svg>
+                  <svg id="cinema-icon-pause" class="w-4 h-4 fill-current hidden" viewBox="0 0 24 24">
+                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                  </svg>
+                </button>
+
+                <!-- Mute / Unmute -->
+                <button type="button" id="cinema-mute-btn" class="p-1 text-white/80 hover:text-white transition-colors focus:outline-none" aria-label="Ton an / aus">
+                  <svg id="cinema-icon-vol" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14"/>
+                  </svg>
+                  <svg id="cinema-icon-mute" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5L6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6"/>
+                  </svg>
+                </button>
+
+                <!-- Timecode -->
+                <span id="cinema-timecode" class="font-mono text-[10px] tracking-wider text-zinc-300 tabular-nums">00:00 / 00:00</span>
+              </div>
+
+              <div class="flex items-center gap-2.5">
+                <span class="hidden sm:inline-block font-mono text-[9px] tracking-[0.2em] uppercase text-zinc-400">LEO STÄGER</span>
+                <!-- Fullscreen -->
+                <button type="button" id="cinema-fs-btn" class="p-1 text-white/80 hover:text-white transition-transform hover:scale-110 focus:outline-none" aria-label="Vollbild">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
   
@@ -2371,6 +2623,8 @@
           aboutGalleriesLabel: 'Galerien',
           aboutGalleriesValue: 'Tiere, Aviatik, Umgebungen, Essen, Gestaltung',
           aboutContactLabel: 'Kontakt',
+          cinemaPosterTitle: 'Showreel & Einblick',
+          cinemaPosterSub: 'Klicken zum Abspielen',
           noMetadata: 'Keine Metadaten verfügbar',
           pageIndicator: (cur, tot) => `Seite ${cur} / ${tot}`,
           prevPage: 'Vorherige Seite',
@@ -2413,6 +2667,8 @@
           aboutGalleriesLabel: 'Galleries',
           aboutGalleriesValue: 'Animals, Aviation, Environments, Food, Design',
           aboutContactLabel: 'Contact',
+          cinemaPosterTitle: 'Showreel & Insight',
+          cinemaPosterSub: 'Click to play',
           noMetadata: 'No metadata available',
           pageIndicator: (cur, tot) => `Page ${cur} / ${tot}`,
           prevPage: 'Previous page',
@@ -2481,6 +2737,12 @@
 
         const aboutContactLabel = document.getElementById('about-contact-label');
         if (aboutContactLabel) aboutContactLabel.textContent = t.aboutContactLabel;
+
+        const cinemaPosterTitle = document.getElementById('cinema-poster-title');
+        if (cinemaPosterTitle) cinemaPosterTitle.textContent = t.cinemaPosterTitle;
+
+        const cinemaPosterSub = document.getElementById('cinema-poster-sub');
+        if (cinemaPosterSub) cinemaPosterSub.textContent = t.cinemaPosterSub;
 
         filterBtns.forEach(btn => {
           const cat = btn.getAttribute('data-filter');
@@ -3149,6 +3411,203 @@
       // Initialize default view to "Home"
       applyFilter('home');
       updateLanguageUI();
+
+      // ----------------------------------------------------
+      // Custom Cinema Showreel Player (YouTube IFrame API)
+      // ----------------------------------------------------
+      const videoFrame = document.getElementById('custom-video-player');
+      const cinemaPoster = document.getElementById('cinema-poster');
+      const cinemaClickSurface = document.getElementById('cinema-click-surface');
+      const cinemaPlayBtn = document.getElementById('cinema-play-btn');
+      const cinemaIconPlay = document.getElementById('cinema-icon-play');
+      const cinemaIconPause = document.getElementById('cinema-icon-pause');
+      const cinemaMuteBtn = document.getElementById('cinema-mute-btn');
+      const cinemaIconVol = document.getElementById('cinema-icon-vol');
+      const cinemaIconMute = document.getElementById('cinema-icon-mute');
+      const cinemaTimecode = document.getElementById('cinema-timecode');
+      const cinemaScrubber = document.getElementById('cinema-scrubber');
+      const cinemaScrubberFill = document.getElementById('cinema-scrubber-fill');
+      const cinemaFsBtn = document.getElementById('cinema-fs-btn');
+
+      let ytPlayer = null;
+      let ytReady = false;
+      let pendingPlay = false;
+      let progressTimer = null;
+      let hideControlsTimeout = null;
+
+      function formatTime(sec) {
+        if (!sec || isNaN(sec)) return '00:00';
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60);
+        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      }
+
+      function syncPlayStateUI(isPlaying) {
+        if (!videoFrame) return;
+        if (isPlaying) {
+          videoFrame.classList.add('has-started');
+          videoFrame.classList.remove('is-paused');
+          if (cinemaPoster) cinemaPoster.classList.add('is-hidden');
+          if (cinemaIconPlay) cinemaIconPlay.classList.add('hidden');
+          if (cinemaIconPause) cinemaIconPause.classList.remove('hidden');
+        } else {
+          videoFrame.classList.add('is-paused');
+          if (cinemaIconPlay) cinemaIconPlay.classList.remove('hidden');
+          if (cinemaIconPause) cinemaIconPause.classList.add('hidden');
+        }
+      }
+
+      function updateProgressLoop() {
+        if (!ytPlayer || !ytReady || typeof ytPlayer.getCurrentTime !== 'function') return;
+        const cur = ytPlayer.getCurrentTime() || 0;
+        const dur = ytPlayer.getDuration() || 0;
+        if (dur > 0 && cinemaScrubberFill) {
+          const pct = Math.min(100, Math.max(0, (cur / dur) * 100));
+          cinemaScrubberFill.style.width = `${pct}%`;
+        }
+        if (cinemaTimecode) {
+          cinemaTimecode.textContent = `${formatTime(cur)} / ${formatTime(dur)}`;
+        }
+      }
+
+      function startShowreel() {
+        if (cinemaPoster) cinemaPoster.classList.add('is-hidden');
+        if (videoFrame) videoFrame.classList.add('has-started');
+        if (ytReady && ytPlayer && typeof ytPlayer.playVideo === 'function') {
+          ytPlayer.playVideo();
+        } else {
+          pendingPlay = true;
+        }
+      }
+
+      function togglePlayPause() {
+        if (!ytReady || !ytPlayer || typeof ytPlayer.getPlayerState !== 'function') {
+          startShowreel();
+          return;
+        }
+        const state = ytPlayer.getPlayerState();
+        if (state === 1) {
+          ytPlayer.pauseVideo();
+        } else {
+          ytPlayer.playVideo();
+        }
+      }
+
+      if (cinemaPoster) {
+        cinemaPoster.addEventListener('click', startShowreel);
+      }
+      if (cinemaClickSurface) {
+        cinemaClickSurface.addEventListener('click', togglePlayPause);
+      }
+      if (cinemaPlayBtn) {
+        cinemaPlayBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          togglePlayPause();
+        });
+      }
+
+      if (cinemaMuteBtn) {
+        cinemaMuteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (!ytReady || !ytPlayer) return;
+          if (ytPlayer.isMuted()) {
+            ytPlayer.unMute();
+            if (cinemaIconVol) cinemaIconVol.classList.remove('hidden');
+            if (cinemaIconMute) cinemaIconMute.classList.add('hidden');
+          } else {
+            ytPlayer.mute();
+            if (cinemaIconVol) cinemaIconVol.classList.add('hidden');
+            if (cinemaIconMute) cinemaIconMute.classList.remove('hidden');
+          }
+        });
+      }
+
+      if (cinemaScrubber) {
+        cinemaScrubber.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (!ytReady || !ytPlayer || typeof ytPlayer.getDuration !== 'function') return;
+          const rect = cinemaScrubber.getBoundingClientRect();
+          const ratio = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+          const dur = ytPlayer.getDuration() || 0;
+          if (dur > 0) {
+            ytPlayer.seekTo(dur * ratio, true);
+            if (cinemaScrubberFill) cinemaScrubberFill.style.width = `${ratio * 100}%`;
+          }
+        });
+      }
+
+      if (cinemaFsBtn && videoFrame) {
+        cinemaFsBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (!document.fullscreenElement) {
+            if (videoFrame.requestFullscreen) videoFrame.requestFullscreen();
+          } else {
+            if (document.exitFullscreen) document.exitFullscreen();
+          }
+        });
+      }
+
+      if (videoFrame) {
+        videoFrame.addEventListener('mousemove', () => {
+          videoFrame.classList.add('controls-visible');
+          clearTimeout(hideControlsTimeout);
+          hideControlsTimeout = setTimeout(() => {
+            videoFrame.classList.remove('controls-visible');
+          }, 2200);
+        });
+      }
+
+      // Load YouTube IFrame API asynchronously
+      window.onYouTubeIframeAPIReady = function () {
+        const targetEl = document.getElementById('yt-player-target');
+        if (!targetEl) return;
+        ytPlayer = new YT.Player('yt-player-target', {
+          videoId: 'leljeVcVIek',
+          playerVars: {
+            controls: 0,
+            modestbranding: 1,
+            rel: 0,
+            showinfo: 0,
+            iv_load_policy: 3,
+            disablekb: 1,
+            playsinline: 1
+          },
+          events: {
+            onReady: () => {
+              ytReady = true;
+              updateProgressLoop();
+              if (pendingPlay) {
+                pendingPlay = false;
+                ytPlayer.playVideo();
+              }
+            },
+            onStateChange: (event) => {
+              if (event.data === 1) {
+                syncPlayStateUI(true);
+                clearInterval(progressTimer);
+                progressTimer = setInterval(updateProgressLoop, 250);
+              } else if (event.data === 2) {
+                syncPlayStateUI(false);
+                clearInterval(progressTimer);
+                updateProgressLoop();
+              } else if (event.data === 0) {
+                syncPlayStateUI(false);
+                clearInterval(progressTimer);
+                if (cinemaPoster) cinemaPoster.classList.remove('is-hidden');
+                if (videoFrame) videoFrame.classList.remove('has-started');
+              }
+            }
+          }
+        });
+      };
+
+      if (!window.YT) {
+        const ytScript = document.createElement('script');
+        ytScript.src = 'https://www.youtube.com/iframe_api';
+        document.head.appendChild(ytScript);
+      } else if (window.YT.Player) {
+        window.onYouTubeIframeAPIReady();
+      }
     });
   </script>
 </body>
