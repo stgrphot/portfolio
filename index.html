@@ -347,7 +347,7 @@
       pointer-events: none;
       z-index: 4;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.55s cubic-bezier(0.25, 0.8, 0.25, 1);
       background: linear-gradient(
         to right,
         rgba(0, 0, 0, 0) 0%,
@@ -360,6 +360,12 @@
         rgba(0, 0, 0, 0) 100%
       );
       border-radius: 12px;
+    }
+    #lightbox-flip-stage.is-spread #magazine-spine-gutter {
+      opacity: 1;
+    }
+    #lightbox-flip-stage.no-gutter-transition #magazine-spine-gutter {
+      transition: none;
     }
     #lightbox-flip-stage.is-spread #magazine-spine-gutter {
       opacity: 1;
@@ -2684,25 +2690,26 @@
 
         // Prepare underlying static base image depending on what stays visible behind the turning leaf
         if (oldIdx === 0 && isFwd) {
-          // Opening front cover: nothing on left yet; right half reveals right side of spread 2
+          // Opening front cover: fade in the center spine shadow smoothly during the turn
           lightboxImg.src = '';
-          flipStage.classList.remove('pos-full', 'pos-right', 'pos-left');
-          flipStage.classList.add('is-spread');
+          flipStage.classList.remove('no-gutter-transition', 'pos-full', 'pos-right', 'pos-left');
+          requestAnimationFrame(() => flipStage.classList.add('is-spread'));
         } else if (newIdx === 0 && !isFwd) {
-          // Closing front cover: left half of spread 2 stays visible until covered, right half is empty
+          // Closing front cover: fade out the center spine shadow smoothly as the cover closes
           lightboxImg.src = '';
-          flipStage.classList.remove('pos-full', 'pos-right', 'pos-left', 'is-spread');
+          flipStage.classList.remove('no-gutter-transition', 'pos-full', 'pos-right', 'pos-left', 'is-spread');
         } else if (newIdx === total - 1 && isFwd) {
-          // Closing back cover: right half of last spread stays visible until covered, left half becomes empty
+          // Closing back cover: fade out the center spine shadow smoothly as the back cover closes
           lightboxImg.src = '';
-          flipStage.classList.remove('pos-full', 'pos-right', 'pos-left', 'is-spread');
+          flipStage.classList.remove('no-gutter-transition', 'pos-full', 'pos-right', 'pos-left', 'is-spread');
         } else if (oldIdx === total - 1 && !isFwd) {
-          // Opening back cover: left half reveals left side of last spread
+          // Opening back cover: fade in the center spine shadow smoothly during the turn
           lightboxImg.src = '';
-          flipStage.classList.remove('pos-full', 'pos-right', 'pos-left');
-          flipStage.classList.add('is-spread');
+          flipStage.classList.remove('no-gutter-transition', 'pos-full', 'pos-right', 'pos-left');
+          requestAnimationFrame(() => flipStage.classList.add('is-spread'));
         } else {
-          // Standard inner spread-to-spread turn: base image stays on the non-turning half
+          // Standard inner spread-to-spread turn: keep center spine shadow continuous
+          flipStage.classList.add('no-gutter-transition');
           applyPageStageLayout(oldIdx, total);
         }
 
@@ -2766,11 +2773,13 @@
 
         const leafEl = bookFlipOverlay.querySelector('.flip-leaf-3d');
         leafEl.addEventListener('animationend', () => {
+          flipStage.classList.add('no-gutter-transition');
           lightboxImg.src = newSrc;
           applyPageStageLayout(newIdx, total);
           bookFlipOverlay.classList.remove('is-flipping');
           bookFlipOverlay.innerHTML = '';
           isFlippingPage = false;
+          requestAnimationFrame(() => flipStage.classList.remove('no-gutter-transition'));
           if (callback) callback();
         }, { once: true });
       }
