@@ -290,80 +290,227 @@
       transform: translate(0, 0);
     }
 
-    /* ── Page-flip: realistic page peel that reveals the next page beneath ── */
+    /* ── Realistic 3D Double-Page Magazine / Book Flip ── */
     #lightbox-flip-stage {
       position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-    }
-
-    #flip-back-img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      object-position: center;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-      z-index: 0;
+      perspective: 2400px;
+      transform-style: preserve-3d;
     }
 
     #lightbox-img {
       position: relative;
       z-index: 1;
       display: block;
+      transition: box-shadow 0.35s ease;
     }
 
-    #flip-fold-edge {
+    /* Subtle Center Spine / Gutter Shadow for Spreads */
+    #magazine-spine-gutter {
       position: absolute;
-      top: 1%;
-      bottom: 1%;
-      width: 56px;
-      margin-left: -28px;
-      z-index: 2;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 68px;
+      transform: translateX(-50%);
       pointer-events: none;
+      z-index: 4;
       opacity: 0;
-      border-radius: 1px;
-      background: linear-gradient(to right,
-        transparent                    0%,
-        rgba(0,0,0,0.04)              12%,
-        rgba(0,0,0,0.22)              35%,
-        rgba(0,0,0,0.60)              50%,
-        rgba(255,255,255,0.08)        62%,
-        rgba(255,255,255,0.03)        78%,
-        transparent                   100%
+      transition: opacity 0.3s ease;
+      background: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0.08) 28%,
+        rgba(0, 0, 0, 0.32) 48%,
+        rgba(0, 0, 0, 0.45) 50%,
+        rgba(255, 255, 255, 0.08) 51.5%,
+        rgba(0, 0, 0, 0.24) 54%,
+        rgba(0, 0, 0, 0.06) 72%,
+        rgba(0, 0, 0, 0) 100%
       );
+      border-radius: 12px;
+    }
+    #lightbox-flip-stage.is-spread #magazine-spine-gutter {
+      opacity: 1;
     }
 
-    @keyframes pageExitFwd {
-      0%   { clip-path: inset(0 0%   0 0 round 10px); }
-      100% { clip-path: inset(0 101% 0 0 round 10px); }
+    /* 3D Turning Leaf Overlay Container */
+    #book-flip-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 6;
+      pointer-events: none;
+      transform-style: preserve-3d;
+      display: none;
     }
-    @keyframes foldEdgeFwd {
-      0%   { left: calc(100% - 28px); opacity: 0; }
-      5%   { opacity: 1; }
-      95%  { opacity: 1; }
-      100% { left: -28px;             opacity: 0; }
-    }
-
-    @keyframes pageExitBwd {
-      0%   { clip-path: inset(0 0 0 0%   round 10px); }
-      100% { clip-path: inset(0 0 0 101% round 10px); }
-    }
-    @keyframes foldEdgeBwd {
-      0%   { left: -28px;             opacity: 0; }
-      5%   { opacity: 1; }
-      95%  { opacity: 1; }
-      100% { left: calc(100% - 28px); opacity: 0; }
+    #book-flip-overlay.is-flipping {
+      display: block;
     }
 
-    #lightbox-img.flip-exit-fwd  { animation: pageExitFwd 0.52s cubic-bezier(0.4,0,0.75,0.3) forwards; }
-    #lightbox-img.flip-exit-bwd  { animation: pageExitBwd 0.52s cubic-bezier(0.4,0,0.75,0.3) forwards; }
-    #flip-fold-edge.edge-fwd     { animation: foldEdgeFwd 0.52s cubic-bezier(0.4,0,0.75,0.3) forwards; }
-    #flip-fold-edge.edge-bwd     { animation: foldEdgeBwd 0.52s cubic-bezier(0.4,0,0.75,0.3) forwards; }
+    /* Static Underlay Half (reveals the destination page underneath) */
+    .flip-underlay-half {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 50%;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .flip-underlay-half.right-half {
+      right: 0;
+      border-top-right-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+    .flip-underlay-half.left-half {
+      left: 0;
+      border-top-left-radius: 12px;
+      border-bottom-left-radius: 12px;
+    }
+    .flip-underlay-half img {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 200%;
+      max-width: none;
+      object-fit: contain;
+    }
+    .flip-underlay-half.right-half img {
+      right: 0;
+    }
+    .flip-underlay-half.left-half img {
+      left: 0;
+    }
+
+    /* Cast shadow onto the underlying page as the leaf lifts */
+    .flip-underlay-shadow {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, rgba(0,0,0,0.45), transparent 65%);
+      animation: underlayShadowFade 0.72s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+    }
+    .flip-underlay-half.left-half .flip-underlay-shadow {
+      background: linear-gradient(to left, rgba(0,0,0,0.45), transparent 65%);
+    }
+
+    @keyframes underlayShadowFade {
+      0%   { opacity: 0.9; }
+      50%  { opacity: 0.5; }
+      100% { opacity: 0; }
+    }
+
+    /* 3D Rotating Page Sheet */
+    .flip-leaf-3d {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 50%;
+      z-index: 3;
+      transform-style: preserve-3d;
+    }
+    .flip-leaf-3d.turn-forward {
+      right: 0;
+      transform-origin: left center;
+      animation: pageTurnForward 0.72s cubic-bezier(0.28, 0.84, 0.32, 1) forwards;
+    }
+    .flip-leaf-3d.turn-backward {
+      left: 0;
+      transform-origin: right center;
+      animation: pageTurnBackward 0.72s cubic-bezier(0.28, 0.84, 0.32, 1) forwards;
+    }
+
+    .flip-leaf-face {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    .flip-leaf-face img {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 200%;
+      max-width: none;
+      object-fit: contain;
+    }
+
+    /* Front & Back Faces for Forward Flip (Right -> Left) */
+    .turn-forward .flip-leaf-front {
+      border-top-right-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+    .turn-forward .flip-leaf-front img {
+      right: 0;
+    }
+    .turn-forward .flip-leaf-back {
+      transform: rotateY(180deg);
+      border-top-left-radius: 12px;
+      border-bottom-left-radius: 12px;
+    }
+    .turn-forward .flip-leaf-back img {
+      left: 0;
+    }
+
+    /* Front & Back Faces for Backward Flip (Left -> Right) */
+    .turn-backward .flip-leaf-front {
+      border-top-left-radius: 12px;
+      border-bottom-left-radius: 12px;
+    }
+    .turn-backward .flip-leaf-front img {
+      left: 0;
+    }
+    .turn-backward .flip-leaf-back {
+      transform: rotateY(180deg);
+      border-top-right-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+    .turn-backward .flip-leaf-back img {
+      right: 0;
+    }
+
+    /* Realistic Paper Sheen & Crease Shading */
+    .flip-leaf-sheen {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .turn-forward .flip-leaf-front .flip-leaf-sheen {
+      background: linear-gradient(to right, rgba(0,0,0,0.22) 0%, rgba(255,255,255,0.12) 25%, rgba(0,0,0,0.18) 100%);
+      animation: sheenFrontFwd 0.72s ease-in-out forwards;
+    }
+    .turn-forward .flip-leaf-back .flip-leaf-sheen {
+      background: linear-gradient(to left, rgba(0,0,0,0.24) 0%, rgba(255,255,255,0.16) 35%, rgba(0,0,0,0.08) 100%);
+      animation: sheenBackFwd 0.72s ease-in-out forwards;
+    }
+    .turn-backward .flip-leaf-front .flip-leaf-sheen {
+      background: linear-gradient(to left, rgba(0,0,0,0.22) 0%, rgba(255,255,255,0.12) 25%, rgba(0,0,0,0.18) 100%);
+      animation: sheenFrontFwd 0.72s ease-in-out forwards;
+    }
+    .turn-backward .flip-leaf-back .flip-leaf-sheen {
+      background: linear-gradient(to right, rgba(0,0,0,0.24) 0%, rgba(255,255,255,0.16) 35%, rgba(0,0,0,0.08) 100%);
+      animation: sheenBackFwd 0.72s ease-in-out forwards;
+    }
+
+    @keyframes pageTurnForward {
+      0%   { transform: rotateY(0deg); }
+      100% { transform: rotateY(-180deg); }
+    }
+    @keyframes pageTurnBackward {
+      0%   { transform: rotateY(0deg); }
+      100% { transform: rotateY(180deg); }
+    }
+    @keyframes sheenFrontFwd {
+      0%   { opacity: 0.15; }
+      45%  { opacity: 0.85; }
+      100% { opacity: 0.3; }
+    }
+    @keyframes sheenBackFwd {
+      0%   { opacity: 0.4; }
+      55%  { opacity: 0.85; }
+      100% { opacity: 0.1; }
+    }
 
     #lightbox {
       transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s;
@@ -1878,14 +2025,16 @@
 
     <!-- Content Card -->
     <div id="lightbox-img-wrapper" class="relative max-w-[calc(100vw-3rem)] sm:max-w-[calc(100vw-8rem)] md:max-w-[calc(100vw-12rem)] max-h-full flex flex-col items-center scale-95 opacity-0 select-none">
-      <!-- Page-peel stage -->
+      <!-- Realistic 3D Magazine Spread Stage -->
       <div id="lightbox-flip-stage">
-        <img id="flip-back-img" src="" alt="">
         <img id="lightbox-img"
              src=""
              alt="Portfolio Großansicht"
              class="max-w-full max-h-[78vh] object-contain rounded-xl shadow-2xl border border-white/10">
-        <div id="flip-fold-edge"></div>
+        <!-- Center Spine Gutter for Spreads -->
+        <div id="magazine-spine-gutter" aria-hidden="true"></div>
+        <!-- 3D Flip Animation Layer -->
+        <div id="book-flip-overlay" aria-hidden="true"></div>
       </div>
       
       <!-- EXIF / Info Bar in Lightbox -->
@@ -1976,13 +2125,17 @@
       const langToggleBtn = document.getElementById('lang-toggle-btn');
       const langIndicatorDe = document.getElementById('lang-indicator-de');
       const langIndicatorEn = document.getElementById('lang-indicator-en');
-      let currentLang = localStorage.getItem('portfolio_lang') || 'de';
+      let currentLang = 'de';
+      try {
+        currentLang = localStorage.getItem('portfolio_lang') || 'de';
+      } catch (e) {}
 
       const i18n = {
         de: {
           brandTitle: 'Zurück zur Startseite',
+          homePill: 'Home',
           backToOverview: 'Übersicht',
-          heroTitleHTML: 'Momente zwischen <span class="italic font-light text-zinc-300">Licht</span> &amp; <span class="italic font-light text-zinc-300">Präzision</span>.',
+          heroTitleHtml: 'Momente zwischen <span class="italic font-light text-zinc-300">Licht</span> &amp; <span class="italic font-light text-zinc-300">Präzision</span>.',
           heroSubtitle: 'Ausgewählte Arbeiten aus Wildlife, Luftfahrt, Landschaft, Kulinarik und visueller Gestaltung. Wähle eine Kollektion für die Vollbild-Ansicht.',
           activeCategories: {
             'home': 'Home — Übersicht',
@@ -1993,7 +2146,6 @@
             'design': 'Gestaltung Galerie'
           },
           categoryLabels: {
-            'home': 'Home',
             'animals': 'Tiere',
             'aviation': 'Aviatik',
             'environments': 'Umgebungen',
@@ -2002,7 +2154,7 @@
           },
           openGallery: 'Galerie öffnen &rarr;',
           categoriesCount: (n) => `${n} Kategorien`,
-          photosCount: (n) => `${n} Werke`,
+          photosCount: (n) => `${n} Fotos`,
           aboutBio: 'Lernender Mediamatiker mit viel Interesse an Fotografie & Videografie.',
           aboutLocationLabel: 'Standort',
           aboutLocationValue: 'Schweiz',
@@ -2023,9 +2175,10 @@
         },
         en: {
           brandTitle: 'Back to Home',
+          homePill: 'Home',
           backToOverview: 'Overview',
-          heroTitleHTML: 'Moments between <span class="italic font-light text-zinc-300">Light</span> &amp; <span class="italic font-light text-zinc-300">Precision</span>.',
-          heroSubtitle: 'Selected works across wildlife, aviation, landscapes, culinary photography, and editorial design. Choose a collection to explore.',
+          heroTitleHtml: 'Moments between <span class="italic font-light text-zinc-300">Light</span> &amp; <span class="italic font-light text-zinc-300">Precision</span>.',
+          heroSubtitle: 'Selected works across wildlife, aviation, landscapes, culinary arts, and visual design. Select a collection for full-screen view.',
           activeCategories: {
             'home': 'Home — Overview',
             'animals': 'Animals Gallery',
@@ -2035,7 +2188,6 @@
             'design': 'Design Gallery'
           },
           categoryLabels: {
-            'home': 'Home',
             'animals': 'Animals',
             'aviation': 'Aviation',
             'environments': 'Environments',
@@ -2044,7 +2196,7 @@
           },
           openGallery: 'Open gallery &rarr;',
           categoriesCount: (n) => `${n} Categories`,
-          photosCount: (n) => `${n} Works`,
+          photosCount: (n) => `${n} Photos`,
           aboutBio: 'Mediamatics apprentice with a strong passion for photography & videography.',
           aboutLocationLabel: 'Location',
           aboutLocationValue: 'Switzerland',
@@ -2071,8 +2223,13 @@
         document.documentElement.lang = currentLang;
 
         if (langIndicatorDe && langIndicatorEn) {
-          langIndicatorDe.className = isDe ? 'transition-colors lang-active' : 'transition-colors lang-inactive';
-          langIndicatorEn.className = isDe ? 'transition-colors lang-inactive' : 'transition-colors lang-active';
+          if (isDe) {
+            langIndicatorDe.className = 'transition-colors lang-active';
+            langIndicatorEn.className = 'transition-colors lang-inactive';
+          } else {
+            langIndicatorDe.className = 'transition-colors lang-inactive';
+            langIndicatorEn.className = 'transition-colors lang-active';
+          }
         }
 
         if (langToggleBtn) {
@@ -2080,24 +2237,18 @@
           langToggleBtn.title = t.langToggleTitle;
         }
 
-        if (brandHomeLink) brandHomeLink.title = t.brandTitle;
+        if (brandHomeLink) {
+          brandHomeLink.title = t.brandTitle;
+        }
+
+        const heroTitleEl = document.getElementById('hero-title');
+        if (heroTitleEl) heroTitleEl.innerHTML = t.heroTitleHtml;
+
+        const heroSubtitleEl = document.getElementById('hero-subtitle');
+        if (heroSubtitleEl) heroSubtitleEl.textContent = t.heroSubtitle;
 
         const backToHomeText = document.getElementById('back-to-home-text');
         if (backToHomeText) backToHomeText.textContent = t.backToOverview;
-
-        const heroTitle = document.getElementById('hero-title');
-        if (heroTitle) {
-          heroTitle.innerHTML = t.heroTitleHTML;
-          if (isLightMode) {
-            heroTitle.querySelectorAll('span').forEach(s => {
-              s.classList.remove('text-zinc-300');
-              s.classList.add('text-zinc-500');
-            });
-          }
-        }
-
-        const heroSubtitle = document.getElementById('hero-subtitle');
-        if (heroSubtitle) heroSubtitle.textContent = t.heroSubtitle;
 
         document.querySelectorAll('.cover-open-gallery').forEach(el => {
           el.innerHTML = t.openGallery;
@@ -2123,12 +2274,24 @@
 
         filterBtns.forEach(btn => {
           const cat = btn.getAttribute('data-filter');
-          if (cat && t.categoryLabels[cat]) {
+          if (cat === 'home') {
             const labelSpan = btn.querySelector('.filter-label');
-            if (labelSpan) {
-              labelSpan.textContent = t.categoryLabels[cat];
-            } else {
-              btn.textContent = t.categoryLabels[cat];
+            if (labelSpan) labelSpan.textContent = t.homePill;
+          } else if (cat && t.categoryLabels[cat]) {
+            btn.textContent = t.categoryLabels[cat];
+          }
+        });
+
+        galleryItems.forEach(item => {
+          const cat = item.getAttribute('data-category');
+          if (cat && t.categoryLabels[cat]) {
+            const homeOverlayTitle = item.querySelector('.home-title-overlay > span:nth-child(2)');
+            if (homeOverlayTitle) {
+              homeOverlayTitle.textContent = t.categoryLabels[cat];
+            }
+            const hoverTag = item.querySelector('.gallery-hover-overlay > span:first-child');
+            if (hoverTag && !item.hasAttribute('data-camera-pages')) {
+              hoverTag.textContent = t.categoryLabels[cat];
             }
           }
         });
@@ -2183,7 +2346,7 @@
         currentLang = targetLang || (currentLang === 'de' ? 'en' : 'de');
         try {
           localStorage.setItem('portfolio_lang', currentLang);
-        } catch(e) {}
+        } catch (e) {}
         updateLanguageUI();
       }
 
@@ -2297,7 +2460,9 @@
             const delay = Math.min(staggerIdx * 45, 360);
             staggerIdx++;
             setTimeout(() => {
-              item.classList.add('visible-item');
+              requestAnimationFrame(() => {
+                item.classList.add('visible-item');
+              });
             }, delay);
           } else {
             item.classList.remove('visible-item');
@@ -2314,8 +2479,8 @@
 
         const t = i18n[currentLang];
         activeCategoryLabel.textContent = t.activeCategories[filterValue] || 'Portfolio';
-        itemCounter.textContent = filterValue === 'home' 
-          ? t.categoriesCount(currentFilteredItems.length) 
+        itemCounter.textContent = filterValue === 'home'
+          ? t.categoriesCount(currentFilteredItems.length)
           : t.photosCount(currentFilteredItems.length);
 
         if (aboutSection) {
@@ -2351,17 +2516,10 @@
       }
 
       // ----------------------------------------------------
-      // Item Click & Custom Cursor Hover
+      // Item Click & Custom Cursor Hover Handling
       // ----------------------------------------------------
       galleryItems.forEach(item => {
-        item.addEventListener('mouseenter', () => {
-          if (customCursor) customCursor.classList.add('is-active');
-        });
-        item.addEventListener('mouseleave', () => {
-          if (customCursor) customCursor.classList.remove('is-active');
-        });
         item.addEventListener('click', () => {
-          if (customCursor) customCursor.classList.remove('is-active');
           if (currentFilter === 'home') {
             const targetCategory = item.getAttribute('data-category');
             if (targetCategory) {
@@ -2372,33 +2530,66 @@
             openLightbox(item);
           }
         });
+
+        if (customCursor) {
+          item.addEventListener('mouseenter', () => {
+            customCursor.classList.add('is-active');
+          });
+          item.addEventListener('mouseleave', () => {
+            customCursor.classList.remove('is-active');
+          });
+        }
       });
 
       // ----------------------------------------------------
-      // Page-peel animation
+      // Realistic 3D Double-Page Magazine Flip Animation
       // ----------------------------------------------------
-      const flipBackImg  = document.getElementById('flip-back-img');
-      const flipFoldEdge = document.getElementById('flip-fold-edge');
+      const flipStage       = document.getElementById('lightbox-flip-stage');
+      const bookFlipOverlay = document.getElementById('book-flip-overlay');
+      let isFlippingPage    = false;
 
-      function runPageFlip(direction, newSrc, callback) {
-        if (!flipBackImg || !flipFoldEdge) {
+      function runPageFlip(direction, oldSrc, newSrc, callback) {
+        if (!bookFlipOverlay || !flipStage || !oldSrc || oldSrc === newSrc) {
           lightboxImg.src = newSrc;
           if (callback) callback();
           return;
         }
 
-        const exitClass = direction === 'forward' ? 'flip-exit-fwd' : 'flip-exit-bwd';
-        const edgeClass = direction === 'forward' ? 'edge-fwd'      : 'edge-bwd';
+        // Cancel any ongoing animation cleanly
+        if (isFlippingPage) {
+          bookFlipOverlay.innerHTML = '';
+          bookFlipOverlay.classList.remove('is-flipping');
+        }
 
-        flipBackImg.src = newSrc;
-        lightboxImg.classList.add(exitClass);
-        flipFoldEdge.classList.add(edgeClass);
+        isFlippingPage = true;
+        const isFwd = direction === 'forward';
 
-        lightboxImg.addEventListener('animationend', function onDone() {
+        // Build the 3D turning leaf + underlying page reveal
+        bookFlipOverlay.innerHTML = `
+          <div class="flip-underlay-half ${isFwd ? 'right-half' : 'left-half'}">
+            <img src="${newSrc}" alt="">
+            <div class="flip-underlay-shadow"></div>
+          </div>
+          <div class="flip-leaf-3d ${isFwd ? 'turn-forward' : 'turn-backward'}">
+            <div class="flip-leaf-face flip-leaf-front">
+              <img src="${oldSrc}" alt="">
+              <div class="flip-leaf-sheen"></div>
+            </div>
+            <div class="flip-leaf-face flip-leaf-back">
+              <img src="${newSrc}" alt="">
+              <div class="flip-leaf-sheen"></div>
+            </div>
+          </div>
+        `;
+
+        bookFlipOverlay.classList.add('is-flipping');
+
+        const leafEl = bookFlipOverlay.querySelector('.flip-leaf-3d');
+        leafEl.addEventListener('animationend', () => {
           lightboxImg.src = newSrc;
-          lightboxImg.classList.remove(exitClass);
-          flipFoldEdge.classList.remove(edgeClass);
-          flipBackImg.src = '';
+          bookFlipOverlay.classList.remove('is-flipping');
+          bookFlipOverlay.innerHTML = '';
+          isFlippingPage = false;
           if (callback) callback();
         }, { once: true });
       }
@@ -2409,6 +2600,7 @@
       function updateLightboxPage(pageIdx, direction) {
         if (!currentItemPages.length) return;
         const prevIdx = currentPageIndex;
+        const oldSrc = currentItemPages[prevIdx];
         currentPageIndex = (pageIdx + currentItemPages.length) % currentItemPages.length;
         const newSrc = currentItemPages[currentPageIndex];
         const flipDir = direction || (currentPageIndex > prevIdx ? 'forward' : 'backward');
@@ -2418,7 +2610,7 @@
         }
 
         if (currentItemPages.length > 1) {
-          runPageFlip(flipDir, newSrc, null);
+          runPageFlip(flipDir, oldSrc, newSrc, null);
         } else {
           lightboxImg.src = newSrc;
         }
@@ -2428,6 +2620,12 @@
         if (!currentFilteredItems.length) return;
         currentLightboxIndex = (index + currentFilteredItems.length) % currentFilteredItems.length;
         const currentItem = currentFilteredItems[currentLightboxIndex];
+
+        if (bookFlipOverlay) {
+          bookFlipOverlay.classList.remove('is-flipping');
+          bookFlipOverlay.innerHTML = '';
+          isFlippingPage = false;
+        }
 
         if (lightboxIndexCounter) {
           const curStr = String(currentLightboxIndex + 1).padStart(2, '0');
@@ -2456,6 +2654,19 @@
         }
         currentPageIndex = 0;
 
+        // Preload spread pages for instant zero-flicker 3D flipping
+        if (currentItemPages.length > 1) {
+          currentItemPages.forEach(src => {
+            const preloadImg = new Image();
+            preloadImg.src = src;
+          });
+        }
+
+        // Toggle realistic center spine gutter on multi-page spreads
+        if (flipStage) {
+          flipStage.classList.toggle('is-spread', currentItemPages.length > 1);
+        }
+
         lightboxImg.src = currentItemPages[0];
         const localizedCat = (i18n[currentLang] && i18n[currentLang].categoryLabels && i18n[currentLang].categoryLabels[category]) 
           ? i18n[currentLang].categoryLabels[category] 
@@ -2471,7 +2682,7 @@
 
         lightboxExif.textContent = exifSpecs.length ? exifSpecs.join('  ·  ') : i18n[currentLang].noMetadata;
 
-        const showPagePager = currentItemPages.length > 1 && category !== 'design';
+        const showPagePager = currentItemPages.length > 1;
 
         if (showPagePager || pdfPath) {
           lightboxPageControls.classList.remove('hidden');
