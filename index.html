@@ -1094,9 +1094,16 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: radial-gradient(circle at center, rgba(10, 10, 14, 0.28) 0%, rgba(5, 5, 8, 0.86) 100%);
+      background-color: #08080a;
       transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.55s;
       cursor: pointer;
+    }
+    .cinema-poster-overlay::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(10, 10, 14, 0.25) 0%, rgba(5, 5, 8, 0.85) 100%);
+      pointer-events: none;
     }
     .cinema-poster-overlay.is-hidden {
       opacity: 0;
@@ -2221,12 +2228,6 @@
                  onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/leljeVcVIek/hqdefault.jpg';"
                  alt="Leo Stäger Showreel Cover"
                  class="cinema-poster-bg">
-            
-            <!-- Top Status Pill -->
-            <div class="absolute top-4 left-6 z-15 flex items-center gap-2 px-2.5 py-1 rounded-full bg-black/55 backdrop-blur-md border border-white/15">
-              <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
-              <span id="cinema-badge-text" class="font-mono text-[9px] tracking-[0.25em] uppercase text-zinc-200">SHOWREEL // 16:9</span>
-            </div>
 
             <!-- Center Magnetic Play Orb -->
             <button type="button" class="cinema-play-orb" aria-label="Showreel abspielen">
@@ -2279,6 +2280,8 @@
                 <!-- Timecode -->
                 <span id="cinema-timecode" class="font-mono text-[10px] tracking-wider text-zinc-300 tabular-nums">00:00 / 00:00</span>
               </div>
+
+              <div class="flex items-center gap-2">
                 <!-- Fullscreen / Minimize Toggle -->
                 <button type="button" id="cinema-fs-btn" class="p-1 text-white/80 hover:text-white transition-transform hover:scale-110 focus:outline-none" aria-label="Vollbild">
                   <svg id="cinema-icon-fs-enter" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
