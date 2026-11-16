@@ -2279,13 +2279,13 @@
                 <!-- Timecode -->
                 <span id="cinema-timecode" class="font-mono text-[10px] tracking-wider text-zinc-300 tabular-nums">00:00 / 00:00</span>
               </div>
-
-              <div class="flex items-center gap-2.5">
-                <span class="hidden sm:inline-block font-mono text-[9px] tracking-[0.2em] uppercase text-zinc-400">LEO STÄGER</span>
-                <!-- Fullscreen -->
+                <!-- Fullscreen / Minimize Toggle -->
                 <button type="button" id="cinema-fs-btn" class="p-1 text-white/80 hover:text-white transition-transform hover:scale-110 focus:outline-none" aria-label="Vollbild">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg id="cinema-icon-fs-enter" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4"/>
+                  </svg>
+                  <svg id="cinema-icon-fs-exit" class="w-3.5 h-3.5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 4v4H4M16 4v4h4M8 20v-4H4M16 20v-4h4"/>
                   </svg>
                 </button>
               </div>
@@ -3428,6 +3428,8 @@
       const cinemaScrubber = document.getElementById('cinema-scrubber');
       const cinemaScrubberFill = document.getElementById('cinema-scrubber-fill');
       const cinemaFsBtn = document.getElementById('cinema-fs-btn');
+      const cinemaIconFsEnter = document.getElementById('cinema-icon-fs-enter');
+      const cinemaIconFsExit = document.getElementById('cinema-icon-fs-exit');
 
       let ytPlayer = null;
       let ytReady = false;
@@ -3539,12 +3541,30 @@
       if (cinemaFsBtn && videoFrame) {
         cinemaFsBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          if (!document.fullscreenElement) {
-            if (videoFrame.requestFullscreen) videoFrame.requestFullscreen();
+          if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+            if (videoFrame.requestFullscreen) {
+              videoFrame.requestFullscreen();
+            } else if (videoFrame.webkitRequestFullscreen) {
+              videoFrame.webkitRequestFullscreen();
+            }
           } else {
-            if (document.exitFullscreen) document.exitFullscreen();
+            if (document.exitFullscreen) {
+              document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+              document.webkitExitFullscreen();
+            }
           }
         });
+
+        const syncFullscreenIcon = () => {
+          const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+          if (cinemaIconFsEnter) cinemaIconFsEnter.classList.toggle('hidden', isFs);
+          if (cinemaIconFsExit) cinemaIconFsExit.classList.toggle('hidden', !isFs);
+          cinemaFsBtn.setAttribute('aria-label', isFs ? 'Vollbild beenden' : 'Vollbild');
+        };
+
+        document.addEventListener('fullscreenchange', syncFullscreenIcon);
+        document.addEventListener('webkitfullscreenchange', syncFullscreenIcon);
       }
 
       if (videoFrame) {
